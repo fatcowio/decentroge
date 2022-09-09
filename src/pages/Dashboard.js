@@ -96,26 +96,27 @@ function Dashboard() {
   useEffect(() => {
     loadfolders();
     loadStorages();
+
     // loadfiles();
   }, [signer]);
 
   const resultsPerPage = 10;
   const totalResults = files.length;
-  console.log(files.length);
+  console.log(storage.length);
   // pagination change control
   function onPageChange(p) {
     setPage(p);
   }
 
   useEffect(() => {
-    if (storage.length === 0) {
-      handler();
-    }
     // if(copied === ')
     setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
   }, [page]);
 
   const onCreateFolder = async (foldername_) => {
+    if (storage?.length === 0) {
+      handler();
+    }
     let transaction = await signer.createFolder(foldername_, 1);
     setisloading(true);
     let txReceipt = await transaction.wait();
@@ -145,7 +146,7 @@ function Dashboard() {
         blur
         aria-labelledby="modal-title"
         open={visible}
-        // onClose={closeHandler}
+        preventClose
       >
         <Modal.Header>
           <Text id="modal-title" size={18}>
