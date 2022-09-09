@@ -49,6 +49,8 @@ import FolderCard from "../components/Cards/FolderCard";
 import { ellipseAddress } from "../lib/utilities";
 
 function Dashboard() {
+  let isActive = localStorage.getItem("isActive");
+
   const history = useHistory();
   const [visible, setVisible] = React.useState(false);
   const handler = () => setVisible(true);
@@ -70,7 +72,7 @@ function Dashboard() {
   const [isipfsready, setisipfsready] = useState(false);
   const [currectplatform, setcurrectplatform] = useState([]);
   const [isplatformready, setisplatformready] = useState(false);
-
+  const [isactiveid, setisactiveid] = useState();
   // console.log(foldername);
   async function loadfolders(id) {
     const data = await signer?.getFolders(id);
@@ -79,7 +81,7 @@ function Dashboard() {
 
     setfolders(filterr);
     loadfiles(filterr[0]?.id.toString());
-    console.log("folders ----------", data);
+    console.log("folders ----------", filterr);
   }
 
   const onError = (err) => {
@@ -105,10 +107,12 @@ function Dashboard() {
       setisipfsready(true);
       var res = JSON.parse(localStorage.getItem(active));
       loadfolders(res[1]);
+      setisactiveid(res[1]);
       setcurrectplatform(res);
     } else if (active == "webStorage") {
       var res = JSON.parse(localStorage.getItem(active));
       loadfolders(res[1]);
+      setisactiveid(res[1]);
       setcurrectplatform(res);
       setwebstorageready(true);
     }
@@ -131,8 +135,10 @@ function Dashboard() {
     setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
   }, [page]);
 
+  console.log("isactiveid", isactiveid);
+
   const onCreateFolder = async (foldername_) => {
-    let transaction = await signer.createFolder(foldername_, 1);
+    let transaction = await signer.createFolder(foldername_, isactiveid);
     setisloading(true);
     let txReceipt = await transaction.wait();
     setisloading(false);

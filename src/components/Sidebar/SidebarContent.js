@@ -76,7 +76,7 @@ function SidebarContent() {
 
         <div className="flex flex-row items-center space-x-2">
           <img src={WS} className="w-8 rounded-lg" />
-          <p className="">web storage</p>
+          <p className="">web3 storage</p>
         </div>
         {/* 
         <div className="flex flex-row items-center space-x-2">

@@ -56,21 +56,26 @@ import FolderCard from "../components/Cards/FolderCard";
 import { ellipseAddress } from "../lib/utilities";
 import { Loading } from "@nextui-org/react";
 
-function getAccessToken() {
-  return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDNCQzQzMDliYTJGRGIxMDZGZWM0YzJGMTJiZmE4RTMwQTUzMTZiZDUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjI0OTA3ODUyMjUsIm5hbWUiOiJkZWNlbnRyb2dlIn0.kcD-OCoPPtPAYR9Ph_cOfz0A9Jl_KamPPmo20j0Q1Dc";
-}
-
-function makeStorageClient() {
-  return new Web3Storage({ token: getAccessToken() });
-}
-
 function Dashboard() {
-  const projectId = "2DB3mQQJtzIC03GYarET8tFZJIm"; //(Step 3. Place the project id from your infura project)
-  const projectSecret = "0dedd8064ff788414096e72cc7e3f4a1"; //(Step 4. Place the project_secrect from your infura project)
+  const [token, settoken] = useState("");
+  const [projectid, setprojectid] = useState("");
+  const [projectsecrete, setprojectsecrete] = useState("");
+
+  function getAccessToken() {
+    // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDNCQzQzMDliYTJGRGIxMDZGZWM0YzJGMTJiZmE4RTMwQTUzMTZiZDUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjI0OTA3ODUyMjUsIm5hbWUiOiJkZWNlbnRyb2dlIn0.kcD-OCoPPtPAYR9Ph_cOfz0A9Jl_KamPPmo20j0Q1Dc";
+    return token;
+  }
+
+  function makeStorageClient() {
+    return new Web3Storage({ token: getAccessToken() });
+  }
+
+  // const projectId = "2DB3mQQJtzIC03GYarET8tFZJIm";
+  const projectId = projectid;
+  const projectSecret = projectsecrete;
+  // const projectSecret = "0dedd8064ff788414096e72cc7e3f4a1";
   const auth =
     "Basic " + Buffer.from(projectId + ":" + projectSecret).toString("base64");
-
-  // const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
   const ipfsClient = require("ipfs-http-client");
   console.log(auth);
   const ipfs = ipfsClient.create({
@@ -82,7 +87,6 @@ function Dashboard() {
       authorization: auth,
     },
   });
-  const history = useHistory();
 
   const { address, signer, contract, provider, chainId, connect } =
     useContext(AuthContext);
@@ -98,8 +102,6 @@ function Dashboard() {
   const [filesize, setfilesize] = useState("");
   const [files, setfiles] = useState([]);
   const [fileready, setfileready] = useState(false);
-  // console.log(foldername, id);
-  const [modal, setModal] = useState(false);
   const [fileModal, setFileModal] = useState(false);
   // pagination setup
   const resultsPerPage = 10;
@@ -108,6 +110,28 @@ function Dashboard() {
   // pagination change control
   function onPageChange(p) {
     setPage(p);
+  }
+
+  let isActive = localStorage.getItem("isActive");
+
+  async function loadPlatforms() {
+    let active = localStorage.getItem("isActive");
+    if (active == "ipfs") {
+      const data = await signer?.getPlatforms();
+      const filterr = data.filter((items) => items.platformName == "IPFS");
+      setprojectid(filterr[0]?.platformid);
+      setprojectsecrete(filterr[0]?.platformsecret);
+      console.log(filterr[0]?.platformid);
+      console.log(filterr[0]?.platformsecret);
+    } else {
+      const data = await signer?.getPlatforms();
+      const filterr = data.filter(
+        (items) => items.platformName == "Web3 Storage"
+      );
+      settoken(filterr[0]?.token);
+      console.log(filterr[0]?.token);
+    }
+    // setplatforms(data);
   }
 
   async function loadfiles() {
@@ -119,6 +143,7 @@ function Dashboard() {
 
   useEffect(() => {
     loadfiles();
+    loadPlatforms();
   }, [signer, fileready]);
 
   // here you would make another server request for new data
@@ -142,7 +167,7 @@ function Dashboard() {
     return filetype.split(".").pop();
   }
 
-  console.log("extension", getExtension());
+  //web3 storage
   async function onChangeCoverImage(e) {
     setisloading(true);
     const files = e.target.files[0];
@@ -178,7 +203,9 @@ function Dashboard() {
     console.log("Error:", err); // Write your own logic
   };
 
+  //ipfs
   async function onChange(e) {
+    setisloading(true);
     const file = e.target.files[0];
     console.log(file);
     try {
@@ -188,6 +215,10 @@ function Dashboard() {
 
       const url = `https://infura-ipfs.io/ipfs/${added.path}`;
       console.log(url);
+      setFile(url);
+      setisloading(false);
+      setfiletype(file.name);
+      setfilesize(file.size);
       // setFileUrl(url);
     } catch (error) {
       console.log("Error uploading file: ", error);
@@ -216,33 +247,6 @@ function Dashboard() {
     // const { foldername, _id } = transferEvent.args;
     // history.push(`/app/folder/${foldername.toString()}/${_id.toString()}`);
     // console.log(foldername, _id);
-  };
-
-  const sendFileToIPFS = async (e) => {
-    // if (fileImg) {
-    try {
-      // const formData = new FormData();
-      // formData.append("file", fileImg);
-      const file = e.target.files[0];
-
-      const resFile = await axios({
-        method: "post",
-        url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
-        data: file,
-        headers: {
-          pinata_api_key: `${"afc2f2b9810690c58724"}`,
-          pinata_secret_api_key: `${"1e676bdcb14b30e75527595c11f5071d8ce192227f95533d67eb6bdba832fda8"}`,
-        },
-      });
-
-      const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
-      console.log(ImgHash);
-      //Take a look at your Pinata Pinned section, you will see a new file added to you list.
-    } catch (error) {
-      console.log("Error sending File to IPFS: ");
-      console.log(error);
-    }
-    // }
   };
 
   return (
@@ -390,7 +394,7 @@ function Dashboard() {
             type="file"
             name="file_upload"
             class="hidden"
-            onChange={onChangeCoverImage}
+            onChange={isActive === "ipfs" ? onChange : onChangeCoverImage}
             // onChange={onChange}
             // onChange={sendFileToIPFS}
           />

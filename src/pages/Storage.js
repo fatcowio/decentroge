@@ -59,7 +59,7 @@ function Charts() {
 
   console.log("folders", folders);
   const getWeb3storage = () => {
-    var res = platforms?.filter((data) => data.platformName === "Web Storage");
+    var res = platforms?.filter((data) => data.platformName === "Web3 Storage");
     return res;
   };
 
@@ -90,7 +90,7 @@ function Charts() {
       let arr = getIPFSstorage();
       localStorage.setItem(
         `ipfs`,
-        JSON.stringify([arr[0].platformName, arr[0].platform_id.toString()])
+        JSON.stringify([arr[0]?.platformName, arr[0].platform_id.toString()])
       );
       localStorage.setItem("isActive", type);
       var res = JSON.parse(localStorage.getItem(type));
@@ -102,7 +102,7 @@ function Charts() {
       let arr = getWeb3storage();
       localStorage.setItem(
         `webStorage`,
-        JSON.stringify([arr[0].platformName, arr[0].platform_id.toString()])
+        JSON.stringify([arr[0]?.platformName, arr[0].platform_id.toString()])
       );
       localStorage.setItem("isActive", type);
       var res = JSON.parse(localStorage.getItem(type));
@@ -280,7 +280,7 @@ function Charts() {
                   <p className="text-red-500">NB: Credentials are Immutable</p>
                   <div
                     onClick={() => {
-                      setplatformName("Web Storage");
+                      setplatformName("Web3 Storage");
                       setModal(true);
                     }}
                     class="flex mt-1 text-green-600 dark:text-green-400 gap-1 cursor-pointer"
@@ -300,7 +300,7 @@ function Charts() {
               src={
                 currectplatform[0] == "IPFS"
                   ? IPFS
-                  : currectplatform[0] === "Web Storage"
+                  : currectplatform[0] === "Web3 Storage"
                   ? WS
                   : ""
               }

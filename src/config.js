@@ -1,1 +1,1 @@
-export const decentrogeAddress = "0xEaaFdb2E3D29D5608D0C84675B435ba0819ab5cF";
+export const decentrogeAddress = "0x9D8FB9D3709e318418e440E1779C0048596f6098";
