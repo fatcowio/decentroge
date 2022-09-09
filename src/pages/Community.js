@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Modal, Input, Row, Checkbox, Button, Text } from "@nextui-org/react";
+import {
+  Modal,
+  Input,
+  Row,
+  Checkbox,
+  Button,
+  Text,
+  Loading,
+  Textarea,
+} from "@nextui-org/react";
 
 import { AuthContext } from "../utils/AuthProvider";
 import PageTitle from "../components/Typography/PageTitle";
@@ -12,6 +21,10 @@ function Buttons() {
   const { address, signer, connect } = useContext(AuthContext);
   const [visible, setVisible] = React.useState(false);
   const [userstatus, setuserstatus] = useState("");
+  const [imageurl, setimageurl] = useState("");
+  const [profile, setprofile] = useState("");
+  const [isloading, setisloading] = useState(false);
+
   const handler = () => setVisible(true);
   const closeHandler = () => {
     setVisible(false);
@@ -24,6 +37,14 @@ function Buttons() {
   useEffect(() => {
     isUserRegistered();
   }, [signer]);
+
+  const onAddProfile = async () => {
+    let transaction = await signer.createProfile(imageurl, profile);
+    setisloading(true);
+    let txReceipt = await transaction.wait();
+    setisloading(false);
+    setVisible(false);
+  };
 
   return (
     <>
@@ -59,29 +80,41 @@ function Buttons() {
             fullWidth
             color="primary"
             size="lg"
+            value={imageurl}
+            onChange={(e) => {
+              setimageurl(e.target.value);
+            }}
             placeholder="place image url here"
           />
-          <Input
+          <Textarea
             clearable
             bordered
             fullWidth
             color="primary"
             size="lg"
-            placeholder="Tell us something interesting about you"
+            value={profile}
+            onChange={(e) => {
+              setprofile(e.target.value);
+            }}
+            placeholder="tell us something interesting about yourself"
           />
-          <Row justify="space-between">
-            <Checkbox>
-              <Text size={14}>Remember me</Text>
-            </Checkbox>
-            <Text size={14}>Forgot password?</Text>
-          </Row>
         </Modal.Body>
         <Modal.Footer>
           <Button auto flat color="error" onClick={closeHandler}>
             Close
           </Button>
-          <Button auto onClick={closeHandler}>
-            Sign in
+          <Button
+            auto
+            onClick={() => {
+              onAddProfile();
+            }}
+          >
+            {isloading ? (
+              <Loading size="xs" color="white" className="pr-4" />
+            ) : (
+              ""
+            )}
+            Add
           </Button>
         </Modal.Footer>
       </Modal>
