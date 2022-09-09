@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { FolderOpenIcon } from "@heroicons/react/24/solid";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import PageTitle from "../components/Typography/PageTitle";
 // import { NFTStorage } from "https://cdn.jsdelivr.net/npm/nft.storage/dist/bundle.esm.min.js";
 import { Web3Storage } from "web3.storage";
@@ -14,6 +14,9 @@ import FileViewer from "react-file-viewer";
 // import { CustomErrorComponent } from "custom-error";
 import { AuthContext } from "../utils/AuthProvider";
 // import { create as ipfsHttpClient } from "ipfs-http-client";
+import prettyBytes from "pretty-bytes";
+import DownloadLink from "react-download-link";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import {
   TableBody,
@@ -34,6 +37,7 @@ import {
   GifIcon,
   VideoCameraIcon,
   DocumentTextIcon,
+  MusicalNoteIcon,
   PlusIcon,
   ServerIcon,
   CalendarIcon,
@@ -49,6 +53,7 @@ import WS from "../assets/img/ws.png";
 import IPFS from "../assets/img/ipfs.png";
 import Moralis from "../assets/img/moralis.png";
 import FolderCard from "../components/Cards/FolderCard";
+import { ellipseAddress } from "../lib/utilities";
 
 function getAccessToken() {
   return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDNCQzQzMDliYTJGRGIxMDZGZWM0YzJGMTJiZmE4RTMwQTUzMTZiZDUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjI0OTA3ODUyMjUsIm5hbWUiOiJkZWNlbnRyb2dlIn0.kcD-OCoPPtPAYR9Ph_cOfz0A9Jl_KamPPmo20j0Q1Dc";
@@ -76,21 +81,27 @@ function Dashboard() {
       authorization: auth,
     },
   });
+  const history = useHistory();
 
   const { address, signer, contract, provider, chainId, connect } =
     useContext(AuthContext);
   let { foldername, id } = useParams();
+  const [fileinfo, setfileinfo] = useState({});
+  const [copied, setcopied] = useState(false);
+
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
   const [file, setFile] = useState("");
   const [filetype, setfiletype] = useState("");
   const [filesize, setfilesize] = useState("");
+  const [files, setfiles] = useState([]);
+  const [fileready, setfileready] = useState(false);
   // console.log(foldername, id);
   const [modal, setModal] = useState(false);
   const [fileModal, setFileModal] = useState(false);
   // pagination setup
   const resultsPerPage = 10;
-  const totalResults = response.length;
+  const totalResults = files?.length;
 
   // pagination change control
   function onPageChange(p) {
@@ -100,17 +111,30 @@ function Dashboard() {
   async function loadfiles() {
     const data = await signer?.getFiles(id);
     // console.log(data);
+    setfiles(data);
     console.log("files ----------", data);
   }
 
   useEffect(() => {
     loadfiles();
-  }, [signer]);
+  }, [signer, fileready]);
 
   // here you would make another server request for new data
   useEffect(() => {
     setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
   }, [page]);
+
+  const fileFormatIcon = (type) => {
+    if (type == "pdf") {
+      return <DocumentTextIcon className="h-8 text-red-500 pr-2" />;
+    } else if (type == "mp3") {
+      return <MusicalNoteIcon className="h-8 text-green-500 pr-2" />;
+    } else if (type == "mp4") {
+      return <VideoCameraIcon className="h-8 text-yellow-400 pr-2" />;
+    } else {
+      return <PhotoIcon className="h-8 text-blue-400 pr-2" />;
+    }
+  };
 
   function getExtension() {
     return filetype.split(".").pop();
@@ -178,6 +202,8 @@ function Dashboard() {
     let txReceipt = await transaction.wait();
     const [transferEvent] = txReceipt.events;
     console.log(transferEvent);
+    setfileready(true);
+    // history.push(0);
     // const { foldername, _id } = transferEvent.args;
     // history.push(`/app/folder/${foldername.toString()}/${_id.toString()}`);
     // console.log(foldername, _id);
@@ -212,6 +238,118 @@ function Dashboard() {
 
   return (
     <>
+      <FileDetail
+        title={"Details"}
+        state={fileModal}
+        onClick={() => {
+          setFileModal(false);
+        }}
+        actionButtonDesktop={
+          <div className="hidden sm:block">
+            <Button block size="large">
+              Download
+            </Button>
+          </div>
+        }
+        actionButtonMobile={
+          <div className="block w-full sm:hidden">
+            {/* <DownloadLink
+              label="Save"
+              filename="myfile.txt"
+              exportFile={() => "My cached data"}
+            /> */}
+            <DownloadLink filename={fileinfo.fileHash}>
+              <Button block size="large">
+                Download
+              </Button>
+            </DownloadLink>
+          </div>
+        }
+      >
+        <div className="mb-4">
+          {copied ? (
+            <p className="text-center text-xl bg-green-400 rounded-lg py-0 max-w-xs text-white m-auto mb-2">
+              copied
+            </p>
+          ) : (
+            ""
+          )}
+          <CopyToClipboard
+            text={fileinfo.fileHash}
+            onCopy={() => {
+              setcopied(true);
+            }}
+          >
+            <Button block size="small" layout="outline">
+              Copy URL
+            </Button>
+            {/* <span>Copy to clipboard with span</span> */}
+          </CopyToClipboard>
+        </div>
+        {/* <img src={Image1} className="rounded-lg" /> */}
+        <div className="h-48 rounded-lg w-full">
+          <FileViewer
+            fileType={fileinfo.fileType}
+            filePath={fileinfo.fileHash}
+            // errorComponent={CustomErrorComponent}
+            onError={onError}
+          />
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm divide-y divide-gray-200">
+            <thead>
+              <tr className="">
+                <th class="p-4 font-medium text-left text-gray-900 dark:text-gray-300 whitespace-nowrap">
+                  <div class="flex items-center">Type</div>
+                </th>
+                <th class="p-4 font-medium text-left text-gray-900 dark:text-gray-300 whitespace-nowrap">
+                  <div class="flex items-center">Size</div>
+                </th>
+                <th class="p-4 font-medium text-left text-gray-900 dark:text-gray-300 whitespace-nowrap">
+                  <div class="flex items-center">Created</div>
+                </th>
+                <th class="p-4 font-medium text-left text-gray-900 dark:text-gray-300 whitespace-nowrap">
+                  <div class="flex items-center">Platform</div>
+                </th>
+                <th class="p-4 font-medium text-left text-gray-900 dark:text-gray-300 whitespace-nowrap">
+                  <div class="flex items-center">Owner</div>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="p-4 font-medium text-gray-900 dark:text-gray-300 flex flex-col justify-start items-center whitespace-nowrap">
+                  <DocumentTextIcon className="h-6 dark:text-gray-200" />{" "}
+                  <span>{fileinfo.fileType}</span>
+                </td>
+                <td class="p-4 text-gray-700 dark:text-gray-300  whitespace-nowrap">
+                  <ServerIcon className="h-6  dark:text-gray-200" />{" "}
+                  <span>
+                    {prettyBytes(parseInt(fileinfo?.fileSize?.toString()) || 0)}
+                  </span>
+                </td>
+                <td class="p-4 text-gray-700 dark:text-gray-300 items-center whitespace-nowrap">
+                  <CalendarIcon className="h-6  dark:text-gray-200" />{" "}
+                  <span>{fileinfo?.uploadTime?.toString()}</span>
+                </td>
+                <td class="p-4 text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  <ShieldCheckIcon className="h-6  dark:text-gray-200" />{" "}
+                  <span>IPFS</span>
+                </td>
+                <td class="p-4 text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  <UserIcon className="h-6  dark:text-gray-200" />{" "}
+                  <span>{ellipseAddress(fileinfo.sender)}</span>
+                </td>
+                {/* <td class="p-4 text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  <LockClosedIcon className="h-6  dark:text-gray-200" />{" "}
+                  <span>Only You</span>
+                </td> */}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </FileDetail>
       <div className="flex flex-row space-x-2  items-center">
         <FolderOpenIcon className="h-16 text-blue-500" />
         <PageTitle>{foldername}</PageTitle>
@@ -276,32 +414,37 @@ function Dashboard() {
           <TableHeader>
             <tr>
               <TableCell>Name</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Own</TableCell>
+              <TableCell>Type</TableCell>
               <TableCell>File Size</TableCell>
+              <TableCell>Upload Time</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {data.map((user, i) => (
-              <TableRow>
+            {files?.map((files, i) => (
+              <TableRow
+                onClick={() => {
+                  setFileModal(true);
+                  setfileinfo(files);
+                }}
+              >
                 <TableCell>
                   <div className="flex items-center text-sm">
-                    <PhotoIcon className="h-8 text-red-500 pr-2" />
+                    {fileFormatIcon(files.fileType)}
                     <div>
-                      <p className="font-semibold">img.jpg</p>
+                      <p className="font-semibold">{files.fileName}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">$ {user.amount}</span>
+                  <span className="text-sm"> {files.fileType}</span>
                 </TableCell>
                 <TableCell>
-                  <Badge type={user.status}>{user.status}</Badge>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">
-                    {new Date(user.date).toLocaleDateString()}
+                  <span>
+                    {prettyBytes(parseInt(files?.fileSize?.toString()) || 0)}
                   </span>
+                </TableCell>
+                <TableCell>
+                  <span>{files?.uploadTime?.toString()}</span>
                 </TableCell>
               </TableRow>
             ))}

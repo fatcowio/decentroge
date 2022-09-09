@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import InfoCard from "../components/Cards/InfoCard";
 import FileCard from "../components/Cards/FileCard";
 import { AuthContext } from "../utils/AuthProvider";
-import { Modal, Text, Popover } from "@nextui-org/react";
+import { Modal, Text, T } from "@nextui-org/react";
 import PageTitle from "../components/Typography/PageTitle";
 import response from "../utils/demo/tableData";
 import Modals from "../components/Modal/Modal";
@@ -60,13 +60,12 @@ function Dashboard() {
   const [modal, setModal] = useState(false);
   const [fileModal, setFileModal] = useState(false);
   const [storage, setstorage] = useState([]);
-  // pagination setup
-  const resultsPerPage = 10;
-  const totalResults = response.length;
   const [foldername, setfoldername] = useState("");
   const [files, setfiles] = useState([]);
   const [fileinfo, setfileinfo] = useState({});
   const [copied, setcopied] = useState(false);
+  // pagination setup
+
   // console.log(foldername);
   async function loadfolders() {
     const data = await signer?.getFolders(1);
@@ -99,6 +98,9 @@ function Dashboard() {
     // loadfiles();
   }, [signer]);
 
+  const resultsPerPage = 10;
+  const totalResults = files.length;
+  console.log(files.length);
   // pagination change control
   function onPageChange(p) {
     setPage(p);
@@ -121,6 +123,17 @@ function Dashboard() {
     console.log(foldername, _id);
   };
 
+  const fileFormatIcon = (type) => {
+    if (type == "pdf") {
+      return <DocumentTextIcon className="h-8 text-red-500 pr-2" />;
+    } else if (type == "mp3") {
+      return <MusicalNoteIcon className="h-8 text-green-500 pr-2" />;
+    } else if (type == "mp4") {
+      return <VideoCameraIcon className="h-8 text-yellow-400 pr-2" />;
+    } else {
+      return <PhotoIcon className="h-8 text-blue-400 pr-2" />;
+    }
+  };
   return (
     <>
       <Modal
@@ -319,13 +332,6 @@ function Dashboard() {
             </p>{" "}
           </div>;
         })}
-
-        {/* <div className=" mt-5 flex flex-row space-x-3 items-center cursor-pointer border-2 p-3 rounded-lg md:max-w-sm max-w-full border-gray-300 ">
-          <img src={IPFS} className="w-8 rounded-lg" />
-          <p class="text-xl font-medium text-gray-900 dark:text-gray-300">
-            IPFS{" "}
-          </p>{" "}
-        </div> */}
       </div>
       <PageTitle>Quick Access</PageTitle>
       {/* <!-- Cards --> */}
@@ -437,25 +443,15 @@ function Dashboard() {
           </TableHeader>
           <TableBody>
             {files?.map((files, i) => (
-              <TableRow>
+              <TableRow
+                onClick={() => {
+                  setFileModal(true);
+                  setfileinfo(files);
+                }}
+              >
                 <TableCell>
                   <div className="flex items-center text-sm">
-                    {files.fileType === "pdf" ? (
-                      <DocumentTextIcon className="h-8 text-red-500 pr-2" />
-                    ) : (
-                      ""
-                    )}
-                    {files.fileType === "mp3" ? (
-                      <MusicalNoteIcon className="h-8 text-green-500 pr-2" />
-                    ) : (
-                      ""
-                    )}
-                    {files.type === "mp4" ? (
-                      <VideoCameraIcon className="h-8 text-blue-400 pr-2" />
-                    ) : (
-                      <PhotoIcon className="h-8 text-blue-400 pr-2" />
-                    )}
-
+                    {fileFormatIcon(files.fileType)}
                     <div>
                       <p className="font-semibold">{files.fileName}</p>
                     </div>
