@@ -34,6 +34,8 @@ contract Decentroge {
         string platformName;
         string token;
         uint256 platform_id;
+        string platformid;
+        string platformsecret;
         uint256 platformCount;
         address user;
     }
@@ -76,9 +78,12 @@ contract Decentroge {
     mapping(uint256 => mapping(uint256 => File)) file;
     mapping(uint256 => User) users;
 
-    function addPlatform(string memory _platformName, string memory token)
-        external
-    {
+    function addPlatform(
+        string memory _platformName,
+        string memory token,
+        string memory _projectid,
+        string memory _projectsecret
+    ) external {
         platformCount[msg.sender] = platformCount[msg.sender] + 1;
         Platform storage _platform = platform[msg.sender][
             platformCount[msg.sender]
@@ -92,6 +97,8 @@ contract Decentroge {
         _platform.token = token;
         _platform.platform_id = platformCount[msg.sender];
         _platform.platformCount = platformCount[msg.sender];
+        _platform.platformid = _projectid;
+        _platform.platformsecret = _projectsecret;
         _platform.user = msg.sender;
         platform[msg.sender][platformCount[msg.sender]] = _platform;
     }
