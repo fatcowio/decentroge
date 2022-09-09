@@ -73,7 +73,7 @@ contract Decentroge {
     mapping(address => uint256) folderCount;
     mapping(address => uint256) fileCount;
     mapping(address => uint256) platformCount;
-    mapping(uint256 => File) file;
+    mapping(uint256 => mapping(uint256 => File)) file;
     mapping(uint256 => User) users;
 
     function addPlatform(string memory _platformName, string memory token)
@@ -102,10 +102,7 @@ contract Decentroge {
         if (registeredUsers[msg.sender] == false) {
             userCount++;
             User storage _users = users[userCount];
-            require(
-                _users._address == msg.sender,
-                "Folder name already exisits"
-            );
+            require(_users._address == msg.sender, "user already exisit");
             _users.id = userCount;
             _users._address = payable(address(msg.sender));
             _users.image = _image;
@@ -157,21 +154,22 @@ contract Decentroge {
 
         require(bytes(_fileType).length > 0);
 
-        require(bytes(_fileDescription).length > 0);
+        // require(bytes(_fileDescription).length > 0);
 
         require(bytes(_fileName).length > 0);
 
         require(_fileSize > 0);
+        fileCount[msg.sender] = fileCount[msg.sender] + 1;
 
-        File storage _file = file[_folderId];
+        File storage _file = file[_folderId][fileCount[msg.sender]];
         // require(
         //     _file.folderId == _folderId &&
         //         keccak256(abi.encodePacked(_file.fileName)) ==
         //         keccak256(abi.encodePacked(_fileName)),
         //     "Folder name already exisits"
         // );
-        _file.fileId = _file.fileId++;
-        _file.fileCount = _file.fileCount++;
+        _file.fileId = fileCount[msg.sender];
+        _file.fileCount = fileCount[msg.sender];
         _file.fileHash = _fileHash;
         _file.fileSize = _fileSize;
         _file.fileType = _fileType;
@@ -180,7 +178,7 @@ contract Decentroge {
         _file.fileDescription = _fileDescription;
         _file.uploadTime = block.timestamp;
         _file.sender = msg.sender;
-        file[_folderId] = _file;
+        file[_folderId][fileCount[msg.sender]] = _file;
         emit FileCreated(
             _file.fileId,
             _file.fileCount,
@@ -233,12 +231,12 @@ contract Decentroge {
 
     //get files
     function getFiles(uint256 _folderId) public view returns (File[] memory) {
-        uint256 itemCount = file[_folderId].fileCount;
+        uint256 itemCount = file[_folderId][fileCount[msg.sender]].fileCount;
         uint256 currentIndex = 0;
         File[] memory _file = new File[](itemCount);
         for (uint256 i = 0; i < itemCount; i++) {
             uint256 currentId = i + 1;
-            File storage currentItem = file[currentId];
+            File storage currentItem = file[_folderId][currentId];
             _file[currentIndex] = currentItem;
             currentIndex += 1;
         }
@@ -257,6 +255,15 @@ contract Decentroge {
             currentIndex += 1;
         }
         return items;
+    }
+
+    //get registered user
+    function isRegistered() public view returns (bool) {
+        if (registeredUsers[msg.sender] == true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     //tipUser

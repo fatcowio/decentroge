@@ -78,11 +78,11 @@ function SidebarContent() {
           <img src={WS} className="w-8 rounded-lg" />
           <p className="">web storage</p>
         </div>
-
+        {/* 
         <div className="flex flex-row items-center space-x-2">
           <img src={Moralis} className="w-8 rounded-lg" />
           <p>Moralis</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

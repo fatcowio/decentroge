@@ -10,7 +10,7 @@ function InfoCard({ title, value, children: icon, image }) {
       <div className="flex flex-row items-center justify-between">
         <div>
           <h2 className="text-md dark:text-gray-100 font-bold mb-0 mt-1 text-gray-600">
-            {title}.jpg
+            {title}
           </h2>
           <p className="text-gray-500 dark:text-gray-50 text-sm">{value}</p>
         </div>

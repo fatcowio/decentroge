@@ -164,26 +164,6 @@ function Charts() {
                 Add Credential <PlusIcon className="h-6" />
               </div>
             </article>
-
-            <article class="p-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-lg">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-sm text-gray-500 dark:text-gray-300">
-                    Platform
-                  </p>
-
-                  <p class="text-2xl font-medium text-gray-900 dark:text-gray-300">
-                    Moralis{" "}
-                  </p>
-                </div>
-
-                <img src={Moralis} className="rounded-full w-10 h-10" />
-              </div>
-
-              <div class="flex mt-1 text-green-600 dark:text-green-400 gap-1 cursor-pointer">
-                Add Credential <PlusIcon className="h-6" />
-              </div>
-            </article>
           </div>
         </ChartCard>
       </div>

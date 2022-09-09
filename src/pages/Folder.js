@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FolderOpenIcon } from "@heroicons/react/24/solid";
 import { useParams } from "react-router-dom";
 import PageTitle from "../components/Typography/PageTitle";
 // import { NFTStorage } from "https://cdn.jsdelivr.net/npm/nft.storage/dist/bundle.esm.min.js";
 import { Web3Storage } from "web3.storage";
+import axios from "axios";
 // import { Web3Storage } from "web3.storage/dist/bundle.esm.min.js.map";
 import response from "../utils/demo/tableData";
 import Modals from "../components/Modal/Modal";
@@ -11,6 +12,8 @@ import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
 import FileDetail from "../components/Modal/FileDetail";
 import FileViewer from "react-file-viewer";
 // import { CustomErrorComponent } from "custom-error";
+import { AuthContext } from "../utils/AuthProvider";
+// import { create as ipfsHttpClient } from "ipfs-http-client";
 
 import {
   TableBody,
@@ -56,14 +59,32 @@ function makeStorageClient() {
 }
 
 function Dashboard() {
-  const file_ = "https://picsum.photos/id/237/200/300";
-  const type = "jpeg";
+  const projectId = "2DB3mQQJtzIC03GYarET8tFZJIm"; //(Step 3. Place the project id from your infura project)
+  const projectSecret = "0dedd8064ff788414096e72cc7e3f4a1"; //(Step 4. Place the project_secrect from your infura project)
+  const auth =
+    "Basic " + Buffer.from(projectId + ":" + projectSecret).toString("base64");
 
+  // const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+  const ipfsClient = require("ipfs-http-client");
+  console.log(auth);
+  const ipfs = ipfsClient.create({
+    host: "ipfs.infura.io",
+    port: 5001,
+    protocol: "https",
+    apiPath: "/api/v0",
+    headers: {
+      authorization: auth,
+    },
+  });
+
+  const { address, signer, contract, provider, chainId, connect } =
+    useContext(AuthContext);
   let { foldername, id } = useParams();
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
   const [file, setFile] = useState("");
   const [filetype, setfiletype] = useState("");
+  const [filesize, setfilesize] = useState("");
   // console.log(foldername, id);
   const [modal, setModal] = useState(false);
   const [fileModal, setFileModal] = useState(false);
@@ -75,6 +96,16 @@ function Dashboard() {
   function onPageChange(p) {
     setPage(p);
   }
+
+  async function loadfiles() {
+    const data = await signer?.getFiles(id);
+    // console.log(data);
+    console.log("files ----------", data);
+  }
+
+  useEffect(() => {
+    loadfiles();
+  }, [signer]);
 
   // here you would make another server request for new data
   useEffect(() => {
@@ -107,6 +138,7 @@ function Dashboard() {
     console.log(files);
     for (const file of filess) {
       setfiletype(file.name);
+      setfilesize(file.size);
       console.log(
         `${file.cid} -- ${file.path} -- ${file.size} -- ${file.name}`
       );
@@ -116,6 +148,66 @@ function Dashboard() {
 
   const onError = (err) => {
     console.log("Error:", err); // Write your own logic
+  };
+
+  async function onChange(e) {
+    const file = e.target.files[0];
+    console.log(file);
+    try {
+      const added = await ipfs.add(file, {
+        progress: (prog) => console.log(`received: ${prog}`),
+      });
+
+      const url = `https://infura-ipfs.io/ipfs/${added.path}`;
+      console.log(url);
+      // setFileUrl(url);
+    } catch (error) {
+      console.log("Error uploading file: ", error);
+    }
+  }
+
+  const onUploadFile = async () => {
+    let transaction = await signer.addFiles(
+      id,
+      file,
+      filesize,
+      getExtension(),
+      filetype,
+      ""
+    );
+    let txReceipt = await transaction.wait();
+    const [transferEvent] = txReceipt.events;
+    console.log(transferEvent);
+    // const { foldername, _id } = transferEvent.args;
+    // history.push(`/app/folder/${foldername.toString()}/${_id.toString()}`);
+    // console.log(foldername, _id);
+  };
+
+  const sendFileToIPFS = async (e) => {
+    // if (fileImg) {
+    try {
+      // const formData = new FormData();
+      // formData.append("file", fileImg);
+      const file = e.target.files[0];
+
+      const resFile = await axios({
+        method: "post",
+        url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        data: file,
+        headers: {
+          pinata_api_key: `${"afc2f2b9810690c58724"}`,
+          pinata_secret_api_key: `${"1e676bdcb14b30e75527595c11f5071d8ce192227f95533d67eb6bdba832fda8"}`,
+        },
+      });
+
+      const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
+      console.log(ImgHash);
+      //Take a look at your Pinata Pinned section, you will see a new file added to you list.
+    } catch (error) {
+      console.log("Error sending File to IPFS: ");
+      console.log(error);
+    }
+    // }
   };
 
   return (
@@ -152,17 +244,29 @@ function Dashboard() {
             name="file_upload"
             class="hidden"
             onChange={onChangeCoverImage}
+            // onChange={onChange}
+            // onChange={sendFileToIPFS}
           />
         </label>
       </div>
-      {/* {file && ( */}
-      <FileViewer
-        fileType={type}
-        filePath={file_}
-        // errorComponent={CustomErrorComponent}
-        onError={onError}
-      />
-      {/* )} */}
+      {file && (
+        <FileViewer
+          fileType={getExtension()}
+          filePath={file}
+          // errorComponent={CustomErrorComponent}
+          onError={onError}
+        />
+      )}
+
+      {file && (
+        <button
+          onClick={() => {
+            onUploadFile();
+          }}
+        >
+          Upload
+        </button>
+      )}
       {/* <FilePreview type={"file"} file={file} onError={onError} /> */}
       {/* {file && <img className="rounded mt-4" width="full" src={file} />} */}
       <PageTitle>Files in {foldername}</PageTitle>
