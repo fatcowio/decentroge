@@ -186,7 +186,7 @@ function Dashboard() {
               }}
             >
               {isloading ? (
-                <Loading size="sm" color="white" className="pr-4" />
+                <Loading size="xs" color="white" className="pr-4" />
               ) : (
                 ""
               )}

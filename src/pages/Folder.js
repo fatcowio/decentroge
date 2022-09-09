@@ -54,6 +54,7 @@ import IPFS from "../assets/img/ipfs.png";
 import Moralis from "../assets/img/moralis.png";
 import FolderCard from "../components/Cards/FolderCard";
 import { ellipseAddress } from "../lib/utilities";
+import { Loading } from "@nextui-org/react";
 
 function getAccessToken() {
   return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDNCQzQzMDliYTJGRGIxMDZGZWM0YzJGMTJiZmE4RTMwQTUzMTZiZDUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjI0OTA3ODUyMjUsIm5hbWUiOiJkZWNlbnRyb2dlIn0.kcD-OCoPPtPAYR9Ph_cOfz0A9Jl_KamPPmo20j0Q1Dc";
@@ -88,7 +89,8 @@ function Dashboard() {
   let { foldername, id } = useParams();
   const [fileinfo, setfileinfo] = useState({});
   const [copied, setcopied] = useState(false);
-
+  const [isloading, setisloading] = useState(false);
+  const [isfileuploading, setisfileuploading] = useState(false);
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
   const [file, setFile] = useState("");
@@ -142,6 +144,7 @@ function Dashboard() {
 
   console.log("extension", getExtension());
   async function onChangeCoverImage(e) {
+    setisloading(true);
     const files = e.target.files[0];
     const client = makeStorageClient();
     const cid = await client.put([files]);
@@ -160,6 +163,7 @@ function Dashboard() {
     setFile(`https://${cid}.ipfs.dweb.link/${files.name}`);
     // console.log(file);
     console.log(files);
+    setisloading(false);
     for (const file of filess) {
       setfiletype(file.name);
       setfilesize(file.size);
@@ -191,6 +195,7 @@ function Dashboard() {
   }
 
   const onUploadFile = async () => {
+    setisfileuploading(true);
     let transaction = await signer.addFiles(
       id,
       file,
@@ -199,10 +204,14 @@ function Dashboard() {
       filetype,
       ""
     );
+
     let txReceipt = await transaction.wait();
     const [transferEvent] = txReceipt.events;
     console.log(transferEvent);
+    setisfileuploading(false);
+    setFile("");
     setfileready(true);
+
     // history.push(0);
     // const { foldername, _id } = transferEvent.args;
     // history.push(`/app/folder/${foldername.toString()}/${_id.toString()}`);
@@ -373,8 +382,8 @@ function Dashboard() {
               />
             </svg>
             <span class="font-medium text-gray-600">
-              Click here to select file, or
-              <span class="text-blue-600 underline">browse</span>
+              Click here to select file
+              {/* <span class="text-blue-600 underline">browse</span> */}
             </span>
           </span>
           <input
@@ -396,6 +405,8 @@ function Dashboard() {
         />
       )}
 
+      {isloading ? <Loading size="lg" /> : ""}
+
       {file && (
         <button
           onClick={() => {
@@ -405,6 +416,7 @@ function Dashboard() {
           Upload
         </button>
       )}
+      {isfileuploading ? <Loading size="lg" /> : ""}
       {/* <FilePreview type={"file"} file={file} onError={onError} /> */}
       {/* {file && <img className="rounded mt-4" width="full" src={file} />} */}
       <PageTitle>Files in {foldername}</PageTitle>
