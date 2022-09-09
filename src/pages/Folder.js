@@ -373,7 +373,7 @@ function Dashboard() {
               />
             </svg>
             <span class="font-medium text-gray-600">
-              Drop files to Attach, or
+              Click here to select file, or
               <span class="text-blue-600 underline">browse</span>
             </span>
           </span>

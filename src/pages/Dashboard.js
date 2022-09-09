@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import InfoCard from "../components/Cards/InfoCard";
 import FileCard from "../components/Cards/FileCard";
 import { AuthContext } from "../utils/AuthProvider";
-import { Modal, Text, T } from "@nextui-org/react";
+import { Modal, Text, Loading } from "@nextui-org/react";
 import PageTitle from "../components/Typography/PageTitle";
 import response from "../utils/demo/tableData";
 import Modals from "../components/Modal/Modal";
@@ -54,6 +54,7 @@ function Dashboard() {
   const handler = () => setVisible(true);
   const { address, signer, contract, provider, chainId, connect } =
     useContext(AuthContext);
+  const [isloading, setisloading] = useState(false);
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
   const [folders, setfolders] = useState([]);
@@ -116,7 +117,10 @@ function Dashboard() {
 
   const onCreateFolder = async (foldername_) => {
     let transaction = await signer.createFolder(foldername_, 1);
+    setisloading(true);
     let txReceipt = await transaction.wait();
+    setisloading(false);
+    setModal(false);
     const [transferEvent] = txReceipt.events;
     const { foldername, _id } = transferEvent.args;
     history.push(`/app/folder/${foldername.toString()}/${_id.toString()}`);
@@ -181,6 +185,11 @@ function Dashboard() {
                 onCreateFolder(foldername);
               }}
             >
+              {isloading ? (
+                <Loading size="sm" color="white" className="pr-4" />
+              ) : (
+                ""
+              )}
               Create
             </Button>
           </div>
