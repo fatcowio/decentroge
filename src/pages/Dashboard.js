@@ -102,7 +102,7 @@ function Dashboard() {
 
   const resultsPerPage = 10;
   const totalResults = files.length;
-  console.log(storage.length);
+  console.log(storage?.length);
   // pagination change control
   function onPageChange(p) {
     setPage(p);
@@ -326,7 +326,13 @@ function Dashboard() {
       </FileDetail>
       <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
         {storage?.map((platform) => {
-          <div className=" mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full border-blue-500 ">
+          // <div className=" mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full  ">
+          //   <img src={WS} className="w-8 rounded-lg" />
+          //   <p class="text-xl font-medium text-gray-900 dark:text-gray-300">
+          //     Web3.storage
+          //   </p>{" "}
+          // </div>
+          <div className=" mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full  ">
             <img src={WS} className="w-8 rounded-lg" />
             <p class="text-xl font-medium text-gray-900 dark:text-gray-300">
               Web3.storage
@@ -434,7 +440,9 @@ function Dashboard() {
         ></FolderCard> */}
       </div>
 
-      <PageTitle>Your files in '{folders[0]?.folderName}' folder</PageTitle>
+      <PageTitle>
+        Your files in '{folders[0]?.folderName || ""}' folder
+      </PageTitle>
       <TableContainer>
         <Table>
           <TableHeader>

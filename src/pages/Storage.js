@@ -35,8 +35,10 @@ function Charts() {
 
   async function loadFolders(id) {
     const data = await signer?.getFolders(id);
+    const filterr = data.filter((items) => items.folderName !== "");
     // setisplatformready(false);
-    setfolders(data);
+    // console.log(filterr);
+    setfolders(filterr);
   }
   // console.log(currectplatform[0]);
   useEffect(() => {
@@ -75,6 +77,7 @@ function Charts() {
     );
     setisloading(true);
     await transaction.wait();
+    setPlatformActive(platformName);
     setisplatformready(true);
     setisloading(false);
     setModal(false);
