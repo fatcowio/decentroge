@@ -440,6 +440,9 @@ function Dashboard() {
                 }}
               >
                 <TableCell>
+                  <span className="text-sm"> {files?.fileId?.toString()}</span>
+                </TableCell>
+                <TableCell>
                   <div className="flex items-center text-sm">
                     {fileFormatIcon(files.fileType)}
                     <div>

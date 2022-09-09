@@ -71,7 +71,7 @@ contract Decentroge {
     mapping(address => bool) public registeredUsers;
 
     mapping(address => uint256) folderCount;
-    mapping(address => uint256) fileCount;
+    mapping(address => mapping(uint256 => uint256)) fileCount;
     mapping(address => uint256) platformCount;
     mapping(uint256 => mapping(uint256 => File)) file;
     mapping(uint256 => User) users;
@@ -159,17 +159,17 @@ contract Decentroge {
         require(bytes(_fileName).length > 0);
 
         require(_fileSize > 0);
-        fileCount[msg.sender] = fileCount[msg.sender] + 1;
+        fileCount[msg.sender][_folderId] = fileCount[msg.sender][_folderId] + 1;
 
-        File storage _file = file[_folderId][fileCount[msg.sender]];
+        File storage _file = file[_folderId][fileCount[msg.sender][_folderId]];
         // require(
         //     _file.folderId == _folderId &&
         //         keccak256(abi.encodePacked(_file.fileName)) ==
         //         keccak256(abi.encodePacked(_fileName)),
         //     "Folder name already exisits"
         // );
-        _file.fileId = fileCount[msg.sender];
-        _file.fileCount = fileCount[msg.sender];
+        _file.fileId = fileCount[msg.sender][_folderId];
+        _file.fileCount = fileCount[msg.sender][_folderId];
         _file.fileHash = _fileHash;
         _file.fileSize = _fileSize;
         _file.fileType = _fileType;
@@ -178,7 +178,7 @@ contract Decentroge {
         _file.fileDescription = _fileDescription;
         _file.uploadTime = block.timestamp;
         _file.sender = msg.sender;
-        file[_folderId][fileCount[msg.sender]] = _file;
+        file[_folderId][fileCount[msg.sender][_folderId]] = _file;
         emit FileCreated(
             _file.fileId,
             _file.fileCount,
@@ -231,7 +231,8 @@ contract Decentroge {
 
     //get files
     function getFiles(uint256 _folderId) public view returns (File[] memory) {
-        uint256 itemCount = file[_folderId][fileCount[msg.sender]].fileCount;
+        uint256 itemCount = file[_folderId][fileCount[msg.sender][_folderId]]
+            .fileCount;
         uint256 currentIndex = 0;
         File[] memory _file = new File[](itemCount);
         for (uint256 i = 0; i < itemCount; i++) {
