@@ -114,9 +114,6 @@ function Dashboard() {
   }, [page]);
 
   const onCreateFolder = async (foldername_) => {
-    if (storage?.length === 0) {
-      handler();
-    }
     let transaction = await signer.createFolder(foldername_, 1);
     setisloading(true);
     let txReceipt = await transaction.wait();
@@ -141,13 +138,7 @@ function Dashboard() {
   };
   return (
     <>
-      <Modal
-        closeButton
-        blur
-        aria-labelledby="modal-title"
-        open={visible}
-        preventClose
-      >
+      <Modal blur aria-labelledby="modal-title" open={visible} preventClose>
         <Modal.Header>
           <Text id="modal-title" size={18}>
             Add a storage platform to process with the application{" "}
@@ -409,6 +400,9 @@ function Dashboard() {
         <PageTitle>Folders</PageTitle>
         <PlusIcon
           onClick={() => {
+            if (storage?.length <= 0) {
+              handler();
+            }
             setModal(true);
           }}
           className="h-6 cursor-pointer dark:text-gray-200"

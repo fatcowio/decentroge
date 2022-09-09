@@ -9,6 +9,7 @@ import IPFS from "../assets/img/ipfs.png";
 import Moralis from "../assets/img/moralis.png";
 import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
 import { AuthContext } from "../utils/AuthProvider";
+import { Loading } from "@nextui-org/react";
 
 import { Button } from "@windmill/react-ui";
 import {
@@ -31,11 +32,15 @@ function Charts() {
   console.log(signer);
   const [token, settoken] = useState("");
   const resultsPerPage = 10;
+  const [isloading, setisloading] = useState(false);
+
   const totalResults = response.length;
   const [platforms, setplatforms] = useState([]);
   const [platformName, setplatformName] = useState("");
   const [projectid, setprojectid] = useState("");
   const [projectsecret, setprojectsecret] = useState("");
+  const [isplatformready, setisplatformready] = useState(false);
+  const [isipfsready, setisipfsready] = useState(false);
   async function loadPlatforms() {
     const data = await signer?.getPlatforms();
     setplatforms(data);
@@ -44,10 +49,10 @@ function Charts() {
 
   useEffect(() => {
     loadPlatforms();
-  }, [signer]);
+  }, [signer, isplatformready]);
 
   const getWeb3storage = () => {
-    var res = platforms?.filter((data) => data.platformName === "Web3 Storage");
+    var res = platforms?.filter((data) => data.platformName === "Web Storage");
     return res;
   };
 
@@ -67,7 +72,16 @@ function Charts() {
       projectid,
       projectsecret
     );
+    setisloading(true);
     await transaction.wait();
+    setisplatformready(true);
+    setisloading(false);
+    setModal(false);
+  };
+
+  const setPlatformActive = async (ipfs) => {
+    setisipfsready(true);
+    console.log(ipfs);
   };
 
   // on page change, load new sliced data
@@ -97,6 +111,11 @@ function Charts() {
                 onCreatePlatform();
               }}
             >
+              {isloading ? (
+                <Loading size="xs" color="white" className="pr-4" />
+              ) : (
+                ""
+              )}
               Create
             </Button>
           </div>
@@ -110,6 +129,11 @@ function Charts() {
                 onCreatePlatform();
               }}
             >
+              {isloading ? (
+                <Loading size="xs" color="white" className="pr-4" />
+              ) : (
+                ""
+              )}
               Create
             </Button>
           </div>
@@ -157,7 +181,16 @@ function Charts() {
       <div className="mb-4">
         <ChartCard title="Decentralize storage ">
           <div className="grid md:grid-cols-2 grid-cols-1  gap-6">
-            <article class="p-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500  rounded-lg">
+            <article
+              onClick={() => {
+                setPlatformActive(getIPFSstorage());
+              }}
+              class={`${
+                isipfsready
+                  ? "p-6 cursor-pointer bg-white dark:bg-gray-800 border-4 border-gray-400 dark:border-gray-500  rounded-lg"
+                  : "p-6 cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500  rounded-lg"
+              } `}
+            >
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm text-gray-500 dark:text-gray-300">
@@ -192,7 +225,7 @@ function Charts() {
               )}
             </article>
 
-            <article class="p-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500  rounded-lg">
+            <article class="p-6 cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500  rounded-lg">
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm text-gray-500 dark:text-gray-300">
