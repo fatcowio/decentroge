@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { ethers } from "ethers";
 import { Link } from "react-router-dom";
 import {
   Modal,
@@ -17,25 +18,41 @@ import SectionTitle from "../components/Typography/SectionTitle";
 import CTA from "../components/CTA";
 import {} from "@windmill/react-ui";
 import PONK from "../assets/img/irupus.png";
+import { ellipseAddress } from "../lib/utilities";
 function Buttons() {
   const { address, signer, connect } = useContext(AuthContext);
   const [visible, setVisible] = React.useState(false);
+  const [visible2, setVisible2] = React.useState(false);
   const [userstatus, setuserstatus] = useState("");
   const [imageurl, setimageurl] = useState("");
   const [profile, setprofile] = useState("");
   const [isloading, setisloading] = useState(false);
-
+  const [amount, setamount] = useState("");
+  const [users, setusers] = useState([]);
+  const [userid, setuserid] = useState("");
   const handler = () => setVisible(true);
   const closeHandler = () => {
     setVisible(false);
+    console.log("closed");
+  };
+  const closeHandler2 = () => {
+    setVisible2(false);
     console.log("closed");
   };
   async function isUserRegistered() {
     const data = await signer?.isRegistered();
     setuserstatus(data);
   }
+
+  async function allUsers() {
+    const data = await signer?.fetchAllUsers();
+    setusers(data);
+    console.log(data);
+    // setuserstatus(data);
+  }
   useEffect(() => {
     isUserRegistered();
+    allUsers();
   }, [signer]);
 
   const onAddProfile = async () => {
@@ -46,6 +63,16 @@ function Buttons() {
     setVisible(false);
   };
 
+  const onTipUser = async () => {
+    const amount_ = ethers.utils.parseUnits(amount, "ether");
+    let transaction = await signer.tipUser(userid, {
+      value: amount_,
+    });
+    setisloading(true);
+    let txReceipt = await transaction.wait();
+    setisloading(false);
+    setVisible(false);
+  };
   return (
     <>
       {/* {isUserRegistered() == false ? setVisible(true) : setVisible(false)} */}
@@ -80,6 +107,7 @@ function Buttons() {
             fullWidth
             color="primary"
             size="lg"
+            required
             value={imageurl}
             onChange={(e) => {
               setimageurl(e.target.value);
@@ -93,6 +121,7 @@ function Buttons() {
             color="primary"
             size="lg"
             value={profile}
+            required
             onChange={(e) => {
               setprofile(e.target.value);
             }}
@@ -107,6 +136,53 @@ function Buttons() {
             auto
             onClick={() => {
               onAddProfile();
+            }}
+          >
+            {isloading ? (
+              <Loading size="xs" color="white" className="pr-4" />
+            ) : (
+              ""
+            )}
+            Add
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        closeButton
+        blur
+        aria-labelledby="modal-title"
+        open={visible2}
+        onClose={closeHandler2}
+      >
+        <Modal.Header>
+          <Text id="modal-title" size={18}>
+            Enter an amount <Text b size={18}></Text>
+          </Text>
+        </Modal.Header>
+        <Modal.Body>
+          <Input
+            clearable
+            bordered
+            fullWidth
+            color="primary"
+            size="lg"
+            required
+            value={amount}
+            onChange={(e) => {
+              setamount(e.target.value);
+            }}
+            placeholder="Enter amount(eth)"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button auto flat color="error" onClick={closeHandler2}>
+            Close
+          </Button>
+          <Button
+            auto
+            onClick={() => {
+              onTipUser();
             }}
           >
             {isloading ? (
@@ -156,31 +232,48 @@ function Buttons() {
       </form>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
-        <a
-          class="overflow-hidden border border-gray-200 rounded-lg grid grid-cols-1 group sm:grid-cols-3"
-          href=""
-        >
-          <div class="relative">
-            <img
-              class="absolute inset-0 object-cover w-full h-full"
-              src={PONK}
-              alt=""
-            />
+        {users?.map((users) => (
+          <div
+            class="overflow-hidden border border-gray-200 rounded-lg grid grid-cols-1 group sm:grid-cols-3"
+            href=""
+          >
+            <div class="relative">
+              <img
+                class="absolute inset-0 object-cover w-full h-full"
+                src={users?.image}
+                alt=""
+              />
+            </div>
+
+            <div class="p-8 sm:col-span-2">
+              <ul class="flex space-x-1">
+                <li
+                  onClick={() => {
+                    setVisible2(true);
+                    setuserid(users?.id?.toString());
+                    // onTipUser(users?.id?.toString());
+                  }}
+                  class="inline-block px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full"
+                >
+                  Tip
+                </li>
+              </ul>
+
+              <h5 class="mt-4 font-bold dark:text-gray-300">
+                {" "}
+                {ellipseAddress(users?._address)}
+              </h5>
+
+              <p class="mt-2 text-sm text-gray-500 dark:text-gray-200">
+                {users?.profile}
+              </p>
+              <p class="mt-2 text-sm text-gray-500 dark:text-gray-200">
+                {ethers.utils.formatEther(users?.balance?.toString())}
+                ETH
+              </p>
+            </div>
           </div>
-
-          <div class="p-8 sm:col-span-2">
-            <ul class="flex space-x-1">
-              <li class="inline-block px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full">
-                Tip
-              </li>
-            </ul>
-
-            <h5 class="mt-4 font-bold"> 0xfab34..3afe8</h5>
-
-            <p class="mt-2 text-sm text-gray-500">Storage Platforms</p>
-            <p>fsafd</p>
-          </div>
-        </a>
+        ))}
       </div>
     </>
   );

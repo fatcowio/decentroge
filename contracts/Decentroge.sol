@@ -109,7 +109,6 @@ contract Decentroge {
         if (registeredUsers[msg.sender] == false) {
             userCount++;
             User storage _users = users[userCount];
-            require(_users._address == msg.sender, "user already exisit");
             _users.id = userCount;
             _users._address = payable(address(msg.sender));
             _users.image = _image;
