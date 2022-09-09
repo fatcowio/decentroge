@@ -27,7 +27,7 @@ function Charts() {
   const [webstorageready, setwebstorageready] = useState(false);
   const [isipfsready, setisipfsready] = useState(false);
   const [currectplatform, setcurrectplatform] = useState([]);
-  const [folders, setfolders] = useState([]);
+  const [folders, setfolders] = useState([{ folderName: "" }]);
   async function loadPlatforms() {
     const data = await signer?.getPlatforms();
     setplatforms(data);
@@ -35,6 +35,7 @@ function Charts() {
 
   async function loadFolders(id) {
     const data = await signer?.getFolders(id);
+    // setisplatformready(false);
     setfolders(data);
   }
   // console.log(currectplatform[0]);
@@ -90,6 +91,7 @@ function Charts() {
       );
       localStorage.setItem("isActive", type);
       var res = JSON.parse(localStorage.getItem(type));
+      loadFolders(res[1]);
       setcurrectplatform(res);
     } else {
       setwebstorageready(true);
@@ -101,6 +103,7 @@ function Charts() {
       );
       localStorage.setItem("isActive", type);
       var res = JSON.parse(localStorage.getItem(type));
+      loadFolders(res[1]);
       setcurrectplatform(res);
     }
   };
@@ -309,9 +312,11 @@ function Charts() {
             <div class="w-full bg-gray-200 rounded-lg dark:bg-gray-700">
               <div
                 class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-1 leading-none rounded-full"
-                style={{ width: `${0.4}%` }}
+                style={{
+                  width: `${folders?.length}%`,
+                }}
               >
-                0{" "}
+                {folders?.length}%
               </div>
             </div>
             <span className="dark:text-white">1TB</span>
