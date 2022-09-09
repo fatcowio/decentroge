@@ -66,13 +66,19 @@ function Dashboard() {
   const [fileinfo, setfileinfo] = useState({});
   const [copied, setcopied] = useState(false);
   // pagination setup
+  const [webstorageready, setwebstorageready] = useState(false);
+  const [isipfsready, setisipfsready] = useState(false);
+  const [currectplatform, setcurrectplatform] = useState([]);
+  const [isplatformready, setisplatformready] = useState(false);
 
   // console.log(foldername);
-  async function loadfolders() {
-    const data = await signer?.getFolders(1);
+  async function loadfolders(id) {
+    const data = await signer?.getFolders(id);
     // console.log(data);
-    setfolders(data);
-    loadfiles(data[0]?.id.toString());
+    const filterr = data.filter((items) => items.folderName !== "");
+
+    setfolders(filterr);
+    loadfiles(filterr[0]?.id.toString());
     console.log("folders ----------", data);
   }
 
@@ -94,11 +100,23 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    loadfolders();
+    let active = localStorage.getItem("isActive");
+    if (active == "ipfs") {
+      setisipfsready(true);
+      var res = JSON.parse(localStorage.getItem(active));
+      loadfolders(res[1]);
+      setcurrectplatform(res);
+    } else if (active == "webStorage") {
+      var res = JSON.parse(localStorage.getItem(active));
+      loadfolders(res[1]);
+      setcurrectplatform(res);
+      setwebstorageready(true);
+    }
+    // loadfolders();
     loadStorages();
 
     // loadfiles();
-  }, [signer]);
+  }, [signer, isplatformready]);
 
   const resultsPerPage = 10;
   const totalResults = files.length;
@@ -123,6 +141,22 @@ function Dashboard() {
     const { foldername, _id } = transferEvent.args;
     history.push(`/app/folder/${foldername.toString()}/${_id.toString()}`);
     console.log(foldername, _id);
+  };
+
+  const setPlatformActive = async (type) => {
+    if (type === "ipfs") {
+      var res = JSON.parse(localStorage.getItem(type));
+      setisipfsready(true);
+      setwebstorageready(false);
+      loadfolders(res[1]);
+      setisplatformready(true);
+    } else {
+      var res = JSON.parse(localStorage.getItem(type));
+      setwebstorageready(true);
+      setisipfsready(false);
+      loadfolders(res[1]);
+      setisplatformready(true);
+    }
   };
 
   const fileFormatIcon = (type) => {
@@ -325,20 +359,44 @@ function Dashboard() {
         </div>
       </FileDetail>
       <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
-        {storage?.map((platform) => {
-          // <div className=" mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full  ">
-          //   <img src={WS} className="w-8 rounded-lg" />
-          //   <p class="text-xl font-medium text-gray-900 dark:text-gray-300">
-          //     Web3.storage
-          //   </p>{" "}
-          // </div>
-          <div className=" mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full  ">
-            <img src={WS} className="w-8 rounded-lg" />
-            <p class="text-xl font-medium text-gray-900 dark:text-gray-300">
-              Web3.storage
-            </p>{" "}
-          </div>;
-        })}
+        {/* {storage?.map((platform) => { */}
+
+        <>
+          <Link to="/app/storage">
+            <div
+              onClick={() => {
+                setPlatformActive("ipfs");
+              }}
+              className={` ${
+                isipfsready
+                  ? "mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full border-blue-300"
+                  : "mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full"
+              }  `}
+            >
+              <img src={IPFS} className="w-8 rounded-lg" />
+              <p class="text-xl font-medium text-gray-900 dark:text-gray-300">
+                IPFS
+              </p>{" "}
+            </div>
+          </Link>
+          <Link to="/app/storage">
+            <div
+              onClick={() => {
+                setPlatformActive("webStorage");
+              }}
+              className={` ${
+                webstorageready
+                  ? "mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full border-blue-300"
+                  : "mt-5 flex flex-row space-x-3 cursor-pointer items-center border-2 p-3 rounded-lg md:max-w-sm max-w-full"
+              }  `}
+            >
+              <img src={WS} className="w-8 rounded-lg" />
+              <p class="text-xl font-medium text-gray-900 dark:text-gray-300">
+                Web3.storage
+              </p>{" "}
+            </div>
+          </Link>
+        </>
       </div>
       <PageTitle>Quick Access</PageTitle>
       {/* <!-- Cards --> */}
