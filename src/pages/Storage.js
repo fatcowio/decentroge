@@ -28,8 +28,8 @@ function Charts() {
   const [modal, setModal] = useState(false);
   const { address, signer, contract, provider, chainId, connect } =
     useContext(AuthContext);
-  console.log(contract);
-  console.log(signer);
+  // console.log(contract);
+  // console.log(signer);
   const [token, settoken] = useState("");
   const resultsPerPage = 10;
   const [isloading, setisloading] = useState(false);
@@ -40,13 +40,15 @@ function Charts() {
   const [projectid, setprojectid] = useState("");
   const [projectsecret, setprojectsecret] = useState("");
   const [isplatformready, setisplatformready] = useState(false);
+  const [webstorageready, setwebstorageready] = useState(false);
   const [isipfsready, setisipfsready] = useState(false);
+  const [currectplatform, setcurrectplatform] = useState([[]]);
   async function loadPlatforms() {
     const data = await signer?.getPlatforms();
     setplatforms(data);
     console.log("platforms ----------", data);
   }
-
+  // console.log(currectplatform[0]);
   useEffect(() => {
     loadPlatforms();
   }, [signer, isplatformready]);
@@ -58,6 +60,7 @@ function Charts() {
 
   const getIPFSstorage = () => {
     var res = platforms?.filter((data) => data.platformName === "IPFS");
+    // console.log(res);
     return res;
   };
   // pagination change control
@@ -79,9 +82,27 @@ function Charts() {
     setModal(false);
   };
 
-  const setPlatformActive = async (ipfs) => {
-    setisipfsready(true);
-    console.log(ipfs);
+  const setPlatformActive = async (type) => {
+    if (type === "ipfs") {
+      setisipfsready(true);
+      setwebstorageready(false);
+      // let fds = getIPFSstorage();
+      // console.log(fds);
+      localStorage.setItem(`ipfs`, JSON.stringify(getIPFSstorage()));
+      localStorage.setItem("isActive", type);
+      var res = JSON.parse(localStorage.getItem(type));
+      setcurrectplatform(res);
+      console.log(res);
+    } else {
+      setwebstorageready(true);
+      setisipfsready(false);
+      localStorage.setItem(`webStorage`, JSON.stringify(getWeb3storage()));
+      localStorage.setItem("isActive", type);
+      var res = JSON.parse(localStorage.getItem(type));
+      setcurrectplatform(res);
+
+      // console.log(res);
+    }
   };
 
   // on page change, load new sliced data
@@ -183,7 +204,7 @@ function Charts() {
           <div className="grid md:grid-cols-2 grid-cols-1  gap-6">
             <article
               onClick={() => {
-                setPlatformActive(getIPFSstorage());
+                setPlatformActive("ipfs");
               }}
               class={`${
                 isipfsready
@@ -225,7 +246,16 @@ function Charts() {
               )}
             </article>
 
-            <article class="p-6 cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500  rounded-lg">
+            <article
+              onClick={() => {
+                setPlatformActive("webStorage");
+              }}
+              class={`${
+                webstorageready
+                  ? "p-6 cursor-pointer bg-white dark:bg-gray-800 border-4 border-gray-400 dark:border-gray-500  rounded-lg"
+                  : "p-6 cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500  rounded-lg"
+              } `}
+            >
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm text-gray-500 dark:text-gray-300">
@@ -265,8 +295,13 @@ function Charts() {
       <div className="grid gap-6 mb-8 md:grid-cols-1">
         <ChartCard title={`${ellipseAddress(address)} Storage`}>
           <div className="flex flex-row space-x-3 items-center ">
-            <img src={IPFS} className="w-8 rounded-lg" />
-            <h1 className="text-xl font-bold dark:text-gray-200 ">IPFS </h1>
+            <img
+              src={currectplatform[0][0] === "IPFS" ? IPFS : WS}
+              className="w-8 rounded-lg"
+            />
+            <h1 className="text-xl font-bold dark:text-gray-200 ">
+              {currectplatform[0][0] || "IPFS"}
+            </h1>
           </div>
           <ServerIcon className="h-40 dark:text-gray-100 text-gray-600" />
           <div className="flex flex-row space-x-3">
@@ -275,8 +310,7 @@ function Charts() {
                 class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-1 leading-none rounded-full"
                 style={{ width: `${0.4}%` }}
               >
-                {" "}
-                1%
+                0{" "}
               </div>
             </div>
             <span className="dark:text-white">1TB</span>
