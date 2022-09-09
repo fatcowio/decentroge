@@ -1,37 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
 import response from "../utils/demo/tableData";
 import ChartCard from "../components/Chart/ChartCard";
-import { Doughnut, Line, Bar } from "react-chartjs-2";
-import ChartLegend from "../components/Chart/ChartLegend";
 import PageTitle from "../components/Typography/PageTitle";
 import WS from "../assets/img/ws.png";
 import IPFS from "../assets/img/ipfs.png";
-import Moralis from "../assets/img/moralis.png";
-import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
+import { Input, Label } from "@windmill/react-ui";
 import { AuthContext } from "../utils/AuthProvider";
 import { Loading } from "@nextui-org/react";
-
 import { Button } from "@windmill/react-ui";
-import {
-  ServerIcon,
-  MusicalNoteIcon,
-  PhotoIcon,
-  FilmIcon,
-  DocumentTextIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ServerIcon, PlusIcon } from "@heroicons/react/24/outline";
 import Modals from "../components/Modal/Modal";
 import { ellipseAddress } from "../lib/utilities";
 function Charts() {
-  const [page, setPage] = useState(1);
-  const [data, setData] = useState([]);
   const [modal, setModal] = useState(false);
-  const { address, signer, contract, provider, chainId, connect } =
-    useContext(AuthContext);
-  // console.log(contract);
-  // console.log(signer);
+  const { address, signer, connect } = useContext(AuthContext);
+
   const [token, settoken] = useState("");
-  const resultsPerPage = 10;
   const [isloading, setisloading] = useState(false);
 
   const totalResults = response.length;
@@ -42,17 +26,35 @@ function Charts() {
   const [isplatformready, setisplatformready] = useState(false);
   const [webstorageready, setwebstorageready] = useState(false);
   const [isipfsready, setisipfsready] = useState(false);
-  const [currectplatform, setcurrectplatform] = useState([[]]);
+  const [currectplatform, setcurrectplatform] = useState([]);
+  const [folders, setfolders] = useState([]);
   async function loadPlatforms() {
     const data = await signer?.getPlatforms();
     setplatforms(data);
-    console.log("platforms ----------", data);
+  }
+
+  async function loadFolders(id) {
+    const data = await signer?.getFolders(id);
+    setfolders(data);
   }
   // console.log(currectplatform[0]);
   useEffect(() => {
+    let active = localStorage.getItem("isActive");
+    if (active == "ipfs") {
+      setisipfsready(true);
+      var res = JSON.parse(localStorage.getItem(active));
+      loadFolders(res[1]);
+      setcurrectplatform(res);
+    } else if (active == "webStorage") {
+      var res = JSON.parse(localStorage.getItem(active));
+      loadFolders(res[1]);
+      setcurrectplatform(res);
+      setwebstorageready(true);
+    }
     loadPlatforms();
   }, [signer, isplatformready]);
 
+  console.log("folders", folders);
   const getWeb3storage = () => {
     var res = platforms?.filter((data) => data.platformName === "Web Storage");
     return res;
@@ -60,13 +62,8 @@ function Charts() {
 
   const getIPFSstorage = () => {
     var res = platforms?.filter((data) => data.platformName === "IPFS");
-    // console.log(res);
     return res;
   };
-  // pagination change control
-  function onPageChange(p) {
-    setPage(p);
-  }
 
   const onCreatePlatform = async () => {
     let transaction = await signer.addPlatform(
@@ -86,30 +83,28 @@ function Charts() {
     if (type === "ipfs") {
       setisipfsready(true);
       setwebstorageready(false);
-      // let fds = getIPFSstorage();
-      // console.log(fds);
-      localStorage.setItem(`ipfs`, JSON.stringify(getIPFSstorage()));
+      let arr = getIPFSstorage();
+      localStorage.setItem(
+        `ipfs`,
+        JSON.stringify([arr[0].platformName, arr[0].platform_id.toString()])
+      );
       localStorage.setItem("isActive", type);
       var res = JSON.parse(localStorage.getItem(type));
       setcurrectplatform(res);
-      console.log(res);
     } else {
       setwebstorageready(true);
       setisipfsready(false);
-      localStorage.setItem(`webStorage`, JSON.stringify(getWeb3storage()));
+      let arr = getWeb3storage();
+      localStorage.setItem(
+        `webStorage`,
+        JSON.stringify([arr[0].platformName, arr[0].platform_id.toString()])
+      );
       localStorage.setItem("isActive", type);
       var res = JSON.parse(localStorage.getItem(type));
       setcurrectplatform(res);
-
-      // console.log(res);
     }
   };
 
-  // on page change, load new sliced data
-  // here you would make another server request for new data
-  useEffect(() => {
-    setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
-  }, [page]);
   return (
     <>
       <button
@@ -296,11 +291,17 @@ function Charts() {
         <ChartCard title={`${ellipseAddress(address)} Storage`}>
           <div className="flex flex-row space-x-3 items-center ">
             <img
-              src={currectplatform[0][0] === "IPFS" ? IPFS : WS}
+              src={
+                currectplatform[0] == "IPFS"
+                  ? IPFS
+                  : currectplatform[0] === "Web Storage"
+                  ? WS
+                  : ""
+              }
               className="w-8 rounded-lg"
             />
             <h1 className="text-xl font-bold dark:text-gray-200 ">
-              {currectplatform[0][0] || "IPFS"}
+              {currectplatform[0] || ""}
             </h1>
           </div>
           <ServerIcon className="h-40 dark:text-gray-100 text-gray-600" />
