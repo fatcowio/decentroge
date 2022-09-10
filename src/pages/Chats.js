@@ -1,50 +1,94 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import PageTitle from "../components/Typography/PageTitle";
-import CTA from "../components/CTA";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from "@windmill/react-ui";
+import { useMoralis, useMoralisQuery } from "react-moralis";
+
 import Profile from "../assets/img/irupus.png";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import Emojicons from "./Emojicons";
+import { Input } from "@windmill/react-ui";
+// import { Input } from "@nextui-org/react";
+const MINS_DURATION = 59;
+
 function Modals() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isAuthenticated, logout, authenticate, user, Moralis, setUserData } =
+    useMoralis();
+  const endOfMessagesRef = useRef(null);
+  const [message, setMessage] = useState("");
+  const [username, setusername] = useState("");
+  // const isUserMessage = messag.get("ethAddress") === user.get("ethAddress");
 
-  function openModal() {
-    setIsModalOpen(true);
+  const { data } = useMoralisQuery(
+    "Messages",
+    (query) =>
+      query
+        .ascending("createdAt")
+        .greaterThan(
+          "createdAt",
+          new Date(Date.now() - 1000 * 60 * MINS_DURATION)
+        ),
+    [],
+    {
+      live: true,
+    }
+  );
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (!message) return;
+    const Messages = Moralis.Object.extend("Messages");
+    const messages = new Messages();
+    messages
+      .save({
+        message: message,
+        username: user.getUsername(),
+        ethAddress: user.get("ethAddress"),
+      })
+      .then(
+        (message) => {},
+        (error) => {
+          console.log(error.message);
+        }
+      );
+    endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+    setMessage("");
+  };
+
+  if (!isAuthenticated) {
+    // alert("not authenticated");
+    return (
+      <button
+        onClick={authenticate}
+        className="bg-sky-200 items-center space-x-4 flex rounded-full px-8 py-2 text-black animate-pulse "
+      >
+        LOGIN TO CHAT
+        <img
+          src="/metaicon.png"
+          className="ml-4 item-center"
+          width="35"
+          height="35"
+        />
+      </button>
+    );
   }
 
-  function closeModal() {
-    setIsModalOpen(false);
-  }
+  const onChangeUserName = () => {
+    if (username === "") {
+      return;
+    }
+    setUserData({
+      username: username,
+    }).then((res) => {
+      setusername("");
+    });
+  };
 
   return (
     <>
-      <PageTitle>Modals</PageTitle>
+      <PageTitle>Chat</PageTitle>
 
       <div class="flex h-screen antialiased text-gray-800">
         <div class="flex md:flex-row flex-col h-full w-full overflow-x-hidden">
           <div class="flex flex-col px-4 mb-5 mt-6 dark:bg-gray-700 rounded-lg  w-full md:w-64 bg-white flex-shrink-0">
-            {/* <div class="flex flex-col items-center bg-indigo-100 dark:bg-gray-800 border border-gray-200 mt-4 w-full py-6 px-6 rounded-lg">
-              <div class="h-20 w-20 rounded-full border overflow-hidden">
-                <img
-                  src="https://avatars3.githubusercontent.com/u/2763884?s=128"
-                  alt="Avatar"
-                  class="h-full w-full"
-                />
-              </div>
-              <div class="text-sm font-semibold mt-2">Aminos Co.</div>
-              <div class="text-xs text-gray-500">Lead UI/UX Designer</div>
-              <div class="flex flex-row items-center mt-3">
-                <div class="flex flex-col justify-center h-4 w-8 bg-indigo-500 rounded-full">
-                  <div class="h-3 w-3 bg-white rounded-full self-end mr-1"></div>
-                </div>
-                <div class="leading-none ml-1 text-xs">Active</div>
-              </div>
-            </div> */}
-
             <div class="w-full mt-4 bg-white rounded-lg border border-gray-200  dark:bg-gray-800 dark:border-gray-700">
               <div class="flex justify-end px-4 pt-4"></div>
               <div class="flex flex-col items-center pb-10">
@@ -54,15 +98,32 @@ function Modals() {
                   alt="Bonnie image"
                 />
                 <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-                  0x0ffdsfdf
+                  {user.getUsername()}
                 </h5>
-                <span class="text-sm text-gray-500 dark:text-gray-400">
-                  32 ETH{" "}
-                </span>
+                <span class="text-sm text-gray-500 dark:text-gray-400"></span>
                 <div className="items-center justify-center ">
                   <div class="w-4 h-4 animate-ping mt-1 bg-green-400  rounded-full m-auto"></div>
 
                   <p className="dark:text-white">Online</p>
+                </div>
+
+                {/* <Input clearable label="Name" placeholder="Name" initialValue="NextUI" /> */}
+                <div className="flex flex-row items-center">
+                  <Input
+                    className="focus:ring-0 focus:border-transparent"
+                    placeholder="change username"
+                    onChange={(e) => {
+                      setusername(e.target.value);
+                    }}
+                    value={username}
+                  />
+                  <div
+                    onClick={() => {
+                      onChangeUserName();
+                    }}
+                  >
+                    <CheckCircleIcon className="h-6 dark:text-gray-200" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -72,127 +133,55 @@ function Modals() {
               <div class="flex flex-col h-full overflow-x-auto mb-4">
                 <div class="flex flex-col h-full">
                   <div class="grid grid-cols-12 gap-y-2">
-                    <div class="col-start-1 col-end-8 p-3 rounded-lg">
-                      <div class="flex flex-row items-center">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative ml-3 text-sm bg-white rounded-md dark:bg-gray-800 dark:text-white py-2 px-4 shadow rounded-xl">
-                          <div>Hey How are you today?</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-start-1 col-end-8 p-3 rounded-lg">
-                      <div class="flex flex-row items-center">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative ml-3 text-sm bg-white rounded-md dark:bg-gray-800 dark:text-white py-2 px-4 shadow rounded-xl">
-                          <div>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                            elit. Vel ipsa commodi illum saepe numquam maxime
-                            asperiores voluptate sit, minima perspiciatis.
+                    {data.map((message) => {
+                      const isUserMessage =
+                        message.get("ethAddress") === user.get("ethAddress");
+                      if (isUserMessage) {
+                        return (
+                          <>
+                            <div class="col-start-6 flex flex-col col-end-13 p-3 rounded-lg">
+                              <div class="flex items-center justify-start flex-row-reverse">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                                  {/* A{message.get("username")} */}
+                                  <Emojicons
+                                    username={message.get("username")}
+                                  />
+                                </div>
+                                <div class="relative mr-3 text-sm bg-indigo-100 dark:bg-gray-600 dark:text-white rounded-md py-2 px-4 shadow rounded-xl">
+                                  <div>{message.get("message")}</div>
+                                </div>
+                              </div>
+                              <span className="justify-end items-end text-xs flex flex-row">
+                                {message.get("username")}
+                              </span>
+                            </div>
+                          </>
+                        );
+                      } else {
+                        <div class="col-start-1 col-end-8 p-3 rounded-lg">
+                          <div class="flex flex-row items-center">
+                            <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                              {/* A{message.get("username")} */}
+                            </div>
+                            <div class="relative ml-3 text-sm bg-white rounded-md dark:bg-gray-800 dark:text-white py-2 px-4 shadow rounded-xl">
+                              <div>{message.get("message")}</div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-start-6 col-end-13 p-3 rounded-lg">
-                      <div class="flex items-center justify-start flex-row-reverse">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative mr-3 text-sm bg-indigo-100 dark:bg-gray-600 dark:text-white rounded-md py-2 px-4 shadow rounded-xl">
-                          <div>I'm ok what about you?</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-start-6 col-end-13 p-3 rounded-lg">
-                      <div class="flex items-center justify-start flex-row-reverse">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative mr-3 text-sm bg-indigo-100 dark:bg-gray-600 dark:text-white rounded-md py-2 px-4 shadow rounded-xl">
-                          <div>
-                            Lorem ipsum dolor sit, amet consectetur adipisicing.
-                            ?
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-start-1 col-end-8 p-3 rounded-lg">
-                      <div class="flex flex-row items-center">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative ml-3 text-sm bg-white rounded-md dark:bg-gray-800 dark:text-white py-2 px-4 shadow rounded-xl">
-                          <div>Lorem ipsum dolor sit amet !</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-start-6 col-end-13 p-3 rounded-lg">
-                      <div class="flex items-center justify-start flex-row-reverse">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative mr-3 text-sm bg-indigo-100 dark:bg-gray-600 dark:text-white rounded-md py-2 px-4 shadow rounded-xl">
-                          <div>
-                            Lorem ipsum dolor sit, amet consectetur adipisicing.
-                            ?
-                          </div>
-                          <div class="absolute text-xs bottom-0 right-0 -mb-5 mr-2 text-gray-500">
-                            Seen
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-start-6 col-end-13 p-3 rounded-lg">
-                      <div class="flex items-center justify-start flex-row-reverse">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative mr-3 text-sm bg-indigo-100 dark:bg-gray-600 dark:text-white rounded-md py-2 px-4 shadow rounded-xl">
-                          <div>
-                            Lorem ipsum dolor sit, amet consectetur adipisicing.
-                            ?
-                          </div>
-                          <div class="absolute text-xs bottom-0 right-0 -mb-5 mr-2 text-gray-500">
-                            Seen
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-start-6 col-end-13 p-3 rounded-lg">
-                      <div class="flex items-center justify-start flex-row-reverse">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative mr-3 text-sm bg-indigo-100 dark:bg-gray-600 dark:text-white rounded-md py-2 px-4 shadow rounded-xl">
-                          <div>
-                            Lorem ipsum dolor sit, amet consectetur adipisicing.
-                            ?
-                          </div>
-                          <div class="absolute text-xs bottom-0 right-0 -mb-5 mr-2 text-gray-500">
-                            Seen
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-start-1 col-end-8 p-3 rounded-lg">
-                      <div class="flex flex-row items-center">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                          A
-                        </div>
-                        <div class="relative ml-3 text-sm bg-white rounded-md dark:bg-gray-800 dark:text-white py-2 px-4 shadow rounded-xl">
-                          <div>
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Perspiciatis, in.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                          <span className="justify-end items-end text-xs flex flex-row">
+                            {message.get("username")}
+                          </span>
+                        </div>;
+                      }
+                    })}
                   </div>
                 </div>
+              </div>
+              <div
+                ref={endOfMessagesRef}
+                className="flex flex-row items-center justify-center text-lg "
+              >
+                <CheckCircleIcon className="h-6 text-green-500" />
+                {""} You're up to date {user.getUsername()}
               </div>
               <div class="flex flex-row items-center h-16 rounded-xl bg-white rounded-md dark:bg-gray-800 dark:text-white w-full px-4">
                 <div>
@@ -216,13 +205,19 @@ function Modals() {
                 <div class="flex-grow ml-4">
                   <div class="relative w-full">
                     <input
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder={`Enter a Message ${user.getUsername()}`}
                       type="text"
                       class="flex w-full border rounded-lg dark:bg-gray-900 dark:border-transparent rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                     />
                   </div>
                 </div>
                 <div class="ml-4">
-                  <button class="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0">
+                  <button
+                    onClick={sendMessage}
+                    class="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
+                  >
                     <span>Send</span>
                     <span class="ml-2">
                       <svg

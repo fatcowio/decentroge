@@ -7,7 +7,7 @@ import ThemedSuspense from "./components/ThemedSuspense";
 import { Windmill } from "@windmill/react-ui";
 import * as serviceWorker from "./serviceWorker";
 import AuthProvider from "./utils/AuthProvider";
-import myTheme from "./myTheme";
+import { MoralisProvider } from "react-moralis";
 // if (process.env.NODE_ENV !== 'production') {
 //   const axe = require('react-axe')
 //   axe(React, ReactDOM, 1000)
@@ -18,7 +18,12 @@ ReactDOM.render(
     <Suspense fallback={<ThemedSuspense />}>
       <Windmill usePreferences>
         <AuthProvider>
-          <App />
+          <MoralisProvider
+            appId="RJbl7MbhvdyOMf9QVJlbhiatTK6XOSqzOefI8a6l"
+            serverUrl="https://oyienocjo8np.usemoralis.com:2053/server"
+          >
+            <App />
+          </MoralisProvider>
         </AuthProvider>
       </Windmill>
     </Suspense>
