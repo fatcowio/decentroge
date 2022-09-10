@@ -231,11 +231,7 @@ export default function NFT() {
       <PageTitle>Decentroge NFT Marketplace</PageTitle>
       <div className="w-max">
         <Button
-          auto
-          className="dark:bg-gray-500"
-          color="gradient"
-          rounded
-          bordered
+          className="bg-blue-500 mb-3"
           onClick={() => {
             setModal(true);
           }}
@@ -245,7 +241,7 @@ export default function NFT() {
       </div>
       <div
         className="
-            grid grid-cols-4 gap-2"
+            grid md:grid-cols-3 grid-col-2 lg:grid-cols-4 gap-3 "
       >
         {/* <Grid.Container gap={1} justify="flex-start"> */}
         {nfts?.map((item, index) => (

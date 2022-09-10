@@ -101,14 +101,14 @@ function Header() {
               </Button>
             )}
 
-            {userprofile[2]?.length === 0 ? (
+            {userprofile[2].length === 0 ? (
               <div class=" hidden md:flex items-center justify-center h-10 w-10 rounded-full bg-blue-300 flex-shrink-0">
                 <Emojicons username={user.getUsername()} />
               </div>
             ) : (
               <img
-                class=" hidden md:block mb-3 w-24 h-24 rounded-full shadow-lg"
-                src={userprofile[0]?.image}
+                class=" hidden md:block mb-3 w-10 h-10 rounded-full shadow-lg"
+                src={userprofile[2]}
                 alt="Bonnie image"
               />
             )}

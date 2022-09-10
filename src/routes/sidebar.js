@@ -61,7 +61,7 @@ const routes = [
         name: "My Assets",
       },
       {
-        path: "/app/sell-assets",
+        path: "/app/resell-assets",
         name: "Sell Assets",
       },
 

@@ -9,7 +9,8 @@ const Community = lazy(() => import("../pages/Community"));
 const Chats = lazy(() => import("../pages/Chats"));
 const NFT = lazy(() => import("../pages/NFT"));
 const Assets = lazy(() => import("../pages/Assets"));
-
+const Resell = lazy(() => import("../pages/Resell"));
+const NFTDashboard = lazy(() => import("../pages/NFTDashboard"));
 const Page404 = lazy(() => import("../pages/404"));
 const Blank = lazy(() => import("../pages/Blank"));
 const Folder = lazy(() => import("../pages/Folder"));
@@ -55,6 +56,14 @@ const routes = [
   {
     path: "/my-assets",
     component: Assets,
+  },
+  {
+    path: "/resell-assets",
+    component: Resell,
+  },
+  {
+    path: "/nft-dashboard",
+    component: NFTDashboard,
   },
   {
     path: "/404",

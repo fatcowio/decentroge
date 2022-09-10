@@ -115,7 +115,7 @@ function Modals() {
                 ) : (
                   <img
                     class="mb-3 w-24 h-24 rounded-full shadow-lg"
-                    src={userprofile[0]?.image}
+                    src={userprofile?.image}
                     alt="Bonnie image"
                   />
                 )}
@@ -165,10 +165,17 @@ function Modals() {
                             <div class="col-start-6 flex flex-col col-end-13 p-3 rounded-lg">
                               <div class="flex items-center justify-start flex-row-reverse">
                                 <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                                  {/* A{message.get("username")} */}
-                                  <Emojicons
-                                    username={message.get("username")}
-                                  />
+                                  {userprofile.image?.length === 0 ? (
+                                    <Emojicons
+                                      username={message.get("username")}
+                                    />
+                                  ) : (
+                                    <img
+                                      class="mb-0 w-10 h-10 rounded-full shadow-lg"
+                                      src={userprofile?.image}
+                                      alt="Bonnie image"
+                                    />
+                                  )}
                                 </div>
                                 <div class="relative mr-3 text-sm bg-indigo-100 dark:bg-gray-600 dark:text-white rounded-md py-2 px-4 shadow rounded-xl">
                                   <div>{message.get("message")}</div>
@@ -184,7 +191,15 @@ function Modals() {
                         <div class="col-start-1 col-end-8 p-3 rounded-lg">
                           <div class="flex flex-row items-center">
                             <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                              {/* A{message.get("username")} */}
+                              {userprofile.image?.length === 0 ? (
+                                <Emojicons username={message.get("username")} />
+                              ) : (
+                                <img
+                                  class="mb-0 w-10 h-10 rounded-full shadow-lg"
+                                  src={userprofile?.image}
+                                  alt="Bonnie image"
+                                />
+                              )}
                             </div>
                             <div class="relative ml-3 text-sm bg-white rounded-md dark:bg-gray-800 dark:text-white py-2 px-4 shadow rounded-xl">
                               <div>{message.get("message")}</div>

@@ -13,13 +13,13 @@ import {
 import { AuthContext } from "../utils/AuthProvider";
 import { ethers } from "ethers";
 
-export default function Assets() {
+export default function NFTDashboard() {
   const { address, signer, connect, contract, provider } =
     useContext(AuthContext);
 
   const [nfts, setnfts] = useState([]);
   async function loadNFT() {
-    const data = await signer?.fetchMyNFTs();
+    const data = await signer?.fetchItemsListed();
     setnfts(data);
     console.log("nft ----------", data);
   }
@@ -29,7 +29,7 @@ export default function Assets() {
 
   return (
     <>
-      <PageTitle> My Assets</PageTitle>
+      <PageTitle> MY Dashboard (Listed NFTs)</PageTitle>
       <div className="w-max"></div>
       <div
         className="
