@@ -21,6 +21,8 @@ contract NFT is ERC721URIStorage {
         uint256 tokenId;
         address payable seller;
         address payable owner;
+        string title;
+        string description;
         uint256 price;
         bool sold;
     }
@@ -52,21 +54,27 @@ contract NFT is ERC721URIStorage {
     }
 
     /* Mints a token and lists it in the marketplace */
-    function createToken(string memory tokenURI, uint256 price)
-        public
-        payable
-        returns (uint256)
-    {
+    function createToken(
+        string memory tokenURI,
+        uint256 price,
+        string memory _title,
+        string memory _description
+    ) public payable returns (uint256) {
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();
 
         _mint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
-        createMarketItem(newTokenId, price);
+        createMarketItem(newTokenId, price, _title, _description);
         return newTokenId;
     }
 
-    function createMarketItem(uint256 tokenId, uint256 price) private {
+    function createMarketItem(
+        uint256 tokenId,
+        uint256 price,
+        string memory _title,
+        string memory _description
+    ) private {
         require(price > 0, "Price must be at least 1 wei");
         require(
             msg.value == listingPrice,
@@ -77,6 +85,8 @@ contract NFT is ERC721URIStorage {
             tokenId,
             payable(msg.sender),
             payable(address(this)),
+            _title,
+            _description,
             price,
             false
         );

@@ -61,7 +61,12 @@ const routes = [
         name: "My Assets",
       },
       {
-        path: "/app/dashboard",
+        path: "/app/sell-assets",
+        name: "Sell Assets",
+      },
+
+      {
+        path: "/app/nft-dashboard",
         name: "Dashboard",
       },
     ],

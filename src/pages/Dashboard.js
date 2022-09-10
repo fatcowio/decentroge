@@ -56,6 +56,8 @@ function Dashboard() {
   const handler = () => setVisible(true);
   const { address, signer, contract, provider, chainId, connect } =
     useContext(AuthContext);
+
+  console.log("signer", signer);
   const [isloading, setisloading] = useState(false);
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);

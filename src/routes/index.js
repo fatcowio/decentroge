@@ -8,6 +8,8 @@ const Storage = lazy(() => import("../pages/Storage"));
 const Community = lazy(() => import("../pages/Community"));
 const Chats = lazy(() => import("../pages/Chats"));
 const NFT = lazy(() => import("../pages/NFT"));
+const Assets = lazy(() => import("../pages/Assets"));
+
 const Page404 = lazy(() => import("../pages/404"));
 const Blank = lazy(() => import("../pages/Blank"));
 const Folder = lazy(() => import("../pages/Folder"));
@@ -49,6 +51,10 @@ const routes = [
   {
     path: "/nft",
     component: NFT,
+  },
+  {
+    path: "/my-assets",
+    component: Assets,
   },
   {
     path: "/404",
