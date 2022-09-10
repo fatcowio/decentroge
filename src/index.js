@@ -8,26 +8,30 @@ import { Windmill } from "@windmill/react-ui";
 import * as serviceWorker from "./serviceWorker";
 import AuthProvider from "./utils/AuthProvider";
 import { MoralisProvider } from "react-moralis";
+import { ThemeProvider } from "next-themes";
+
 // if (process.env.NODE_ENV !== 'production') {
 //   const axe = require('react-axe')
 //   axe(React, ReactDOM, 1000)
 // }
 
 ReactDOM.render(
-  <SidebarProvider>
-    <Suspense fallback={<ThemedSuspense />}>
-      <Windmill usePreferences>
-        <AuthProvider>
-          <MoralisProvider
-            appId="RJbl7MbhvdyOMf9QVJlbhiatTK6XOSqzOefI8a6l"
-            serverUrl="https://oyienocjo8np.usemoralis.com:2053/server"
-          >
-            <App />
-          </MoralisProvider>
-        </AuthProvider>
-      </Windmill>
-    </Suspense>
-  </SidebarProvider>,
+  <ThemeProvider attribute="class">
+    <SidebarProvider>
+      <Suspense fallback={<ThemedSuspense />}>
+        <Windmill usePreferences>
+          <AuthProvider>
+            <MoralisProvider
+              appId="RJbl7MbhvdyOMf9QVJlbhiatTK6XOSqzOefI8a6l"
+              serverUrl="https://oyienocjo8np.usemoralis.com:2053/server"
+            >
+              <App />
+            </MoralisProvider>
+          </AuthProvider>
+        </Windmill>
+      </Suspense>
+    </SidebarProvider>
+  </ThemeProvider>,
   document.getElementById("root")
 );
 

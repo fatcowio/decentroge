@@ -71,6 +71,17 @@ function Modals() {
     setMessage("");
   };
 
+  const onChangeUserName = () => {
+    if (username === "") {
+      return;
+    }
+    setUserData({
+      username: username,
+    }).then((res) => {
+      setusername("");
+    });
+  };
+
   if (!isAuthenticated) {
     // alert("not authenticated");
     return (
@@ -88,17 +99,6 @@ function Modals() {
       </button>
     );
   }
-
-  const onChangeUserName = () => {
-    if (username === "") {
-      return;
-    }
-    setUserData({
-      username: username,
-    }).then((res) => {
-      setusername("");
-    });
-  };
 
   return (
     <>

@@ -2,6 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 const windmill = require("@windmill/react-ui/config");
 
 module.exports = windmill({
+  mode: "jit",
   purge: ["src/**/*.js"],
   theme: {
     extend: {
@@ -17,4 +18,5 @@ module.exports = windmill({
       },
     },
   },
+  plugins: [],
 });

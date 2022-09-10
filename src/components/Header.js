@@ -5,7 +5,6 @@ import { Button } from "@nextui-org/react";
 import { SearchIcon, MoonIcon, SunIcon, MenuIcon } from "../icons";
 import { Input, WindmillContext } from "@windmill/react-ui";
 import { useMoralis, useMoralisQuery } from "react-moralis";
-
 import Emojicons from "../pages/Emojicons";
 
 function Header() {
