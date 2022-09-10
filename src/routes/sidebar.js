@@ -13,6 +13,7 @@ import {
   ServerStackIcon,
   UserGroupIcon,
   ChatBubbleLeftRightIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 const routes = [
   {
@@ -41,6 +42,30 @@ const routes = [
     icon: <ChatBubbleLeftRightIcon className="h-6" />,
     name: "Chat",
   },
+  // {
+  //   path: "/app/nft",
+  //   icon: <SparklesIcon className="h-6" />,
+  //   name: "NFT",
+  // },
+  {
+    icon: "PagesIcon",
+    name: "NFT Market",
+    routes: [
+      // submenu
+      {
+        path: "/app/nft",
+        name: "Home",
+      },
+      {
+        path: "/app/my-assets",
+        name: "My Assets",
+      },
+      {
+        path: "/app/dashboard",
+        name: "Dashboard",
+      },
+    ],
+  },
   {
     path: "/app/setting",
     icon: <CogIcon className="h-6" />,
@@ -51,33 +76,6 @@ const routes = [
   //   path: "/app/tables",
   //   icon: "TablesIcon",
   //   name: "Tables",
-  // },
-  // {
-  //   icon: "PagesIcon",
-  //   name: "Pages",
-  //   routes: [
-  //     // submenu
-  //     {
-  //       path: "/login",
-  //       name: "Login",
-  //     },
-  //     {
-  //       path: "/create-account",
-  //       name: "Create account",
-  //     },
-  //     {
-  //       path: "/forgot-password",
-  //       name: "Forgot password",
-  //     },
-  //     {
-  //       path: "/app/404",
-  //       name: "404",
-  //     },
-  //     {
-  //       path: "/app/blank",
-  //       name: "Blank",
-  //     },
-  //   ],
   // },
 ];
 

@@ -1,33 +1,19 @@
 import React, { useContext, useState } from "react";
 import { SidebarContext } from "../context/SidebarContext";
-import { generateRandomAvatarOptions } from "../../src/avatar";
+import { AuthContext } from "../utils/AuthProvider";
+import { Button } from "@nextui-org/react";
+import { SearchIcon, MoonIcon, SunIcon, MenuIcon } from "../icons";
+import { Input, WindmillContext } from "@windmill/react-ui";
+import { useMoralis, useMoralisQuery } from "react-moralis";
 
-// import Avatar from "boring-avatars";
-import Avatar from "avataaars";
-
-import {
-  SearchIcon,
-  MoonIcon,
-  SunIcon,
-  BellIcon,
-  MenuIcon,
-  OutlinePersonIcon,
-  OutlineCogIcon,
-  OutlineLogoutIcon,
-} from "../icons";
-import {
-  // Avatar,
-  Badge,
-  Input,
-  Dropdown,
-  DropdownItem,
-  WindmillContext,
-} from "@windmill/react-ui";
+import Emojicons from "../pages/Emojicons";
 
 function Header() {
   const { mode, toggleMode } = useContext(WindmillContext);
   const { toggleSidebar } = useContext(SidebarContext);
-
+  const { address, signer, connect, disconnect, web3Provider } =
+    useContext(AuthContext);
+  const { user } = useMoralis();
   const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
@@ -35,14 +21,12 @@ function Header() {
     setIsNotificationsMenuOpen(!isNotificationsMenuOpen);
   }
 
+  let userprofile = JSON.parse(localStorage.getItem("userprofile"));
+
+  console.log(userprofile);
   function handleProfileClick() {
     setIsProfileMenuOpen(!isProfileMenuOpen);
   }
-  // const avatar = Avatarr.male8bitBuilder(128);
-  // avatar.create("gabriel").then((buffer) => {
-  //   /* png buffer */
-  //   console.log("png buffer", buffer);
-  // });
 
   return (
     <header className="z-30 w-full py-4 bg-white shadow-bottom dark:bg-gray-800">
@@ -83,90 +67,51 @@ function Header() {
               )}
             </button>
           </li>
-          {/* <!-- Notifications menu --> */}
-          <li className="relative">
-            <button
-              className="relative align-middle rounded-md focus:outline-none focus:shadow-outline-blue"
-              onClick={handleNotificationsClick}
-              aria-label="Notifications"
-              aria-haspopup="true"
-            >
-              <BellIcon className="w-5 h-5" aria-hidden="true" />
-              {/* <!-- Notification badge --> */}
-              <span
-                aria-hidden="true"
-                className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
-              ></span>
-            </button>
+          <li className="flex">
+            {web3Provider ? (
+              // <div
+              //   className=" bg-gradient-to-r from-cyan-500 to-blue-500 px-4 md:px-6  md:py-3 py-2 rounded-md cursor-pointer text-white"
+              //   onClick={() => {
+              //     disconnect();
+              //   }}
+              // >
+              //   Disconnect
+              // </div>
 
-            <Dropdown
-              align="right"
-              isOpen={isNotificationsMenuOpen}
-              onClose={() => setIsNotificationsMenuOpen(false)}
-            >
-              <DropdownItem tag="a" href="#" className="justify-between">
-                <span>Messages</span>
-                <Badge type="danger">13</Badge>
-              </DropdownItem>
-              <DropdownItem tag="a" href="#" className="justify-between">
-                <span>Sales</span>
-                <Badge type="danger">2</Badge>
-              </DropdownItem>
-              <DropdownItem onClick={() => alert("Alerts!")}>
-                <span>Alerts</span>
-              </DropdownItem>
-            </Dropdown>
-          </li>
-          {/* <!-- Profile menu --> */}
-          <li className="relative">
-            <button
-              className="rounded-full mt-2 focus:shadow-outline-blue focus:outline-none"
-              onClick={handleProfileClick}
-              aria-label="Account"
-              aria-haspopup="true"
-            >
-              {/* <Avatar
-                className="align-middle"
-                src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
-                alt=""
-                aria-hidden="true"
-              /> */}
-              {/* <Avatar
-                size={30}
-                name="Mends Albert"
-                variant="marble"
-                colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-              /> */}
-              <Avatar
-                style={{ width: "40px", height: "40px" }}
-                avatarStyle="Circle"
-                {...generateRandomAvatarOptions()}
+              <Button
+                onClick={() => {
+                  disconnect();
+                }}
+                color="gradient"
+                auto
+                className="mr-2"
+              >
+                Disconnect
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  connect();
+                }}
+                color="gradient"
+                auto
+                className="mr-2"
+              >
+                Connect
+              </Button>
+            )}
+
+            {userprofile[2]?.length === 0 ? (
+              <div class=" hidden md:flex items-center justify-center h-10 w-10 rounded-full bg-blue-300 flex-shrink-0">
+                <Emojicons username={user.getUsername()} />
+              </div>
+            ) : (
+              <img
+                class=" hidden md:block mb-3 w-24 h-24 rounded-full shadow-lg"
+                src={userprofile[0]?.image}
+                alt="Bonnie image"
               />
-            </button>
-            <Dropdown
-              align="right"
-              isOpen={isProfileMenuOpen}
-              onClose={() => setIsProfileMenuOpen(false)}
-            >
-              <DropdownItem tag="a" href="#">
-                <OutlinePersonIcon
-                  className="w-4 h-4 mr-3"
-                  aria-hidden="true"
-                />
-                <span>Profile</span>
-              </DropdownItem>
-              <DropdownItem tag="a" href="#">
-                <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />
-                <span>Settings</span>
-              </DropdownItem>
-              <DropdownItem onClick={() => alert("Log out!")}>
-                <OutlineLogoutIcon
-                  className="w-4 h-4 mr-3"
-                  aria-hidden="true"
-                />
-                <span>Disconnect</span>
-              </DropdownItem>
-            </Dropdown>
+            )}
           </li>
         </ul>
       </div>

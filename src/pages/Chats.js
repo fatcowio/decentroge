@@ -6,7 +6,9 @@ import Profile from "../assets/img/irupus.png";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import Emojicons from "./Emojicons";
 import { Input } from "@windmill/react-ui";
-// import { Input } from "@nextui-org/react";
+import { ellipseAddress } from "../lib/utilities";
+import { AuthContext } from "../utils/AuthProvider";
+
 const MINS_DURATION = 59;
 
 function Modals() {
@@ -14,8 +16,24 @@ function Modals() {
     useMoralis();
   const endOfMessagesRef = useRef(null);
   const [message, setMessage] = useState("");
+  const [userprofile, setuserprofile] = useState("");
   const [username, setusername] = useState("");
-  // const isUserMessage = messag.get("ethAddress") === user.get("ethAddress");
+  const { address, signer, connect } = useContext(AuthContext);
+  async function loaduser() {
+    const data = await signer.getSingleUser();
+    console.log(data);
+    localStorage.setItem("userprofile", JSON.stringify(data));
+    setuserprofile(data);
+  }
+
+  useEffect(() => {
+    loaduser();
+  }, [signer]);
+
+  // const addDefaultSrc = (ev) => {
+  //   console.log(ev);
+  //   ev.target.src = <Emojicons username={user.get("username")} />;
+  // };
 
   const { data } = useMoralisQuery(
     "Messages",
@@ -92,11 +110,16 @@ function Modals() {
             <div class="w-full mt-4 bg-white rounded-lg border border-gray-200  dark:bg-gray-800 dark:border-gray-700">
               <div class="flex justify-end px-4 pt-4"></div>
               <div class="flex flex-col items-center pb-10">
-                <img
-                  class="mb-3 w-24 h-24 rounded-full shadow-lg"
-                  src={Profile}
-                  alt="Bonnie image"
-                />
+                {userprofile.image?.length === 0 ? (
+                  <Emojicons username={user.getUsername()} />
+                ) : (
+                  <img
+                    class="mb-3 w-24 h-24 rounded-full shadow-lg"
+                    src={userprofile[0]?.image}
+                    alt="Bonnie image"
+                  />
+                )}
+
                 <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
                   {user.getUsername()}
                 </h5>
@@ -129,7 +152,7 @@ function Modals() {
             </div>
           </div>
           <div class="flex flex-col flex-auto h-full p-6">
-            <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl dark:bg-gray-700 bg-gray-100 h-full p-4">
+            <div class="flex flex-col flex-auto w-full flex-shrink-0 rounded-2xl dark:bg-gray-700 bg-gray-100 h-full p-4">
               <div class="flex flex-col h-full overflow-x-auto mb-4">
                 <div class="flex flex-col h-full">
                   <div class="grid grid-cols-12 gap-y-2">
@@ -151,7 +174,7 @@ function Modals() {
                                   <div>{message.get("message")}</div>
                                 </div>
                               </div>
-                              <span className="justify-end items-end text-xs flex flex-row">
+                              <span className="justify-end dark:text-gray-200 items-end text-xs flex flex-row">
                                 {message.get("username")}
                               </span>
                             </div>
@@ -167,7 +190,7 @@ function Modals() {
                               <div>{message.get("message")}</div>
                             </div>
                           </div>
-                          <span className="justify-end items-end text-xs flex flex-row">
+                          <span className="justify-end dark:text-gray-200 items-end text-xs flex flex-row">
                             {message.get("username")}
                           </span>
                         </div>;
@@ -178,10 +201,10 @@ function Modals() {
               </div>
               <div
                 ref={endOfMessagesRef}
-                className="flex flex-row items-center justify-center text-lg "
+                className="flex flex-row items-center justify-center text-lg dark:text-gray-300 "
               >
-                <CheckCircleIcon className="h-6 text-green-500" />
-                {""} You're up to date {user.getUsername()}
+                <CheckCircleIcon className="h-4 text-green-500 " />
+                {""} You're caught up {user.getUsername()}
               </div>
               <div class="flex flex-row items-center h-16 rounded-xl bg-white rounded-md dark:bg-gray-800 dark:text-white w-full px-4">
                 <div>

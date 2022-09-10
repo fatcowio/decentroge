@@ -77,6 +77,7 @@ contract Decentroge {
     mapping(address => uint256) platformCount;
     mapping(uint256 => mapping(uint256 => File)) file;
     mapping(uint256 => User) users;
+    mapping(address => User) userProfile;
 
     function addPlatform(
         string memory _platformName,
@@ -109,13 +110,24 @@ contract Decentroge {
         if (registeredUsers[msg.sender] == false) {
             userCount++;
             User storage _users = users[userCount];
+            User storage _userprofile = userProfile[msg.sender];
+
             _users.id = userCount;
             _users._address = payable(address(msg.sender));
             _users.image = _image;
             _users.profile = _profile;
             _users.balance = 0;
             registeredUsers[msg.sender] = true;
+
+            //userProfile
+            _userprofile.id = userCount;
+            _userprofile.image = _image;
+            _userprofile.profile = _profile;
+            _userprofile._address = payable(address(msg.sender));
+
+            userProfile[msg.sender] = _userprofile;
             users[userCount] = _users;
+
             emit UserCreated(
                 _users.id,
                 payable(address(msg.sender)),
@@ -271,6 +283,11 @@ contract Decentroge {
         } else {
             return false;
         }
+    }
+
+    //get user
+    function getSingleUser() public view returns (User memory) {
+        return userProfile[msg.sender];
     }
 
     //tipUser

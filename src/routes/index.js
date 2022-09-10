@@ -7,7 +7,7 @@ const Setting = lazy(() => import("../pages/Setting"));
 const Storage = lazy(() => import("../pages/Storage"));
 const Community = lazy(() => import("../pages/Community"));
 const Chats = lazy(() => import("../pages/Chats"));
-const Tables = lazy(() => import("../pages/Tables"));
+const NFT = lazy(() => import("../pages/NFT"));
 const Page404 = lazy(() => import("../pages/404"));
 const Blank = lazy(() => import("../pages/Blank"));
 const Folder = lazy(() => import("../pages/Folder"));
@@ -47,8 +47,8 @@ const routes = [
     component: Chats,
   },
   {
-    path: "/tables",
-    component: Tables,
+    path: "/nft",
+    component: NFT,
   },
   {
     path: "/404",

@@ -1,6 +1,6 @@
 import React from "react";
 import routes from "../../routes/sidebar";
-import { NavLink, Route } from "react-router-dom";
+import { NavLink, Route, Link } from "react-router-dom";
 import * as Icons from "../../icons";
 import SidebarSubmenu from "./SidebarSubmenu";
 import { Button } from "@windmill/react-ui";
@@ -58,26 +58,32 @@ function SidebarContent() {
         )}
       </ul>
       <div className="px-6 my-6">
-        <button className="bg-blue-500 text-white text-md px-5 rounded-md py-2">
-          Create Folder
-          <span className="ml-2" aria-hidden="true">
-            +
-          </span>
-        </button>
+        <Link to="/app/dashboard">
+          <button className="bg-blue-500 text-white text-md px-5 rounded-md py-2">
+            Create Folder
+            <span className="ml-2" aria-hidden="true">
+              +
+            </span>
+          </button>
+        </Link>
       </div>
 
       <hr />
 
-      <div className="space-y-4 ml-6  mt-3">
-        <div className="flex flex-row items-center space-x-2">
-          <img src={IPFS} className="w-8" />
-          <p>IPFS</p>
-        </div>
+      <div className="space-y-6 ml-6  mt-3">
+        <Link to="/app/storage" className="mb-4">
+          <div className="flex flex-row mb-4 items-center space-x-2">
+            <img src={IPFS} className="w-8" />
+            <p>IPFS</p>
+          </div>
+        </Link>
 
-        <div className="flex flex-row items-center space-x-2">
-          <img src={WS} className="w-8 rounded-lg" />
-          <p className="">web3 storage</p>
-        </div>
+        <Link to="/app/storage">
+          <div className="flex flex-row items-center space-x-2">
+            <img src={WS} className="w-8 rounded-lg" />
+            <p className="">web3 storage</p>
+          </div>
+        </Link>
         {/* 
         <div className="flex flex-row items-center space-x-2">
           <img src={Moralis} className="w-8 rounded-lg" />
