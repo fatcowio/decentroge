@@ -41,13 +41,13 @@
 </p>
 
 ## 💪 Motivation
-Switching between several web3 storage solutions like IPSF and Web3 Storage might be challenging at times. Personally, I use IPFS and web3 storage for my files. Can we create NFTs from files we've already submitted to these platforms? Can we have a user-friendly interface that displays files and groups them into folders? What if you could manage all of your files on a single platform?
+Switching between several web3 storage solutions like IPFS and Web3 Storage might be challenging at times. Personally, I use IPFS and web3 storage for my files. Can we create NFTs from files we've already submitted to these platforms? Can we have a user-friendly interface that displays files and groups them into folders? What if you could manage all of your files on a single platform?
 
 That is how decentroge came to be.
 
 ## 🚀 How it works
 
-Decentroge a decentralise storage online Platforms with NFT and Chatting capabilities.Users can store their data on IPFS or Web3 Storage. Users can access files directly through web browser without using any third party software.
+Decentroge is a decentralise storage online Platforms with NFT and Chatting capabilities.Users can store their data on IPFS or Web3 Storage. Users can access files directly through web browser without using any third party software.
 
  It has been implemented in order to reduce the dependency on centralized services like Dropbox and Google Drive where users are dependent on a single point of failure. It will give you complete control over your data, right from its inception.
  Features:
