@@ -7,7 +7,7 @@ export default function Hero() {
   const el = useRef(null);
   useEffect(() => {
     const typed = new Typed(el.current, {
-      strings: ["Storage", "NFT", "Social Media"], // Strings to display
+      strings: ["Storage 💾", "NFT 🎨", "Chat 💬"], // Strings to display
       // Speed settings, try diffrent values untill you get good results
       startDelay: 300,
       typeSpeed: 100,
@@ -25,16 +25,18 @@ export default function Hero() {
       <Container className="flex flex-wrap ">
         <div className="flex items-center w-full lg:w-1/2">
           <div className="max-w-2xl mb-8">
-            <h1 className="text-4xl font-bold leading-snug tracking-tight text-gray-800 lg:text-4xl lg:leading-tight xl:text-6xl xl:leading-tight dark:text-white">
+            <h1 className="text-3xl font-bold leading-snug tracking-tight text-gray-800 lg:text-4xl lg:leading-tight xl:text-5xl xl:leading-tight dark:text-white">
               <span className="text-transparent text-blue-400">
                 Decentroge.
               </span>{" "}
+            </h1>
+            <h1 className="text-3xl font-bold leading-snug tracking-tight text-gray-800 lg:text-2xl lg:leading-tight xl:text-5xl xl:leading-tight dark:text-white">
               Get <span ref={el}></span> All in one app
             </h1>
             <p className="py-5 text-xl leading-normal text-gray-600 lg:text-xl xl:text-2xl dark:text-gray-300">
-              Decentroge a decentralise storage online Platforms with NFT,
-              Chatting. The user can store their data on private or public cloud
-              servers like IPFS and Web3 Storage.
+              Decentroge a decentralise storage online Platforms with NFT and
+              Chatting capabilities.Users can choose to store their data on IPFS
+              or Web3 Storage.
             </p>
 
             <div className="flex flex-col items-start space-x-3 space-y-3 sm:space-y-0 sm:items-center sm:flex-row">

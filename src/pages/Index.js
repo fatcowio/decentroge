@@ -24,10 +24,10 @@ export default function Home() {
         <Benefits data={benefitOne} />
         <Benefits imgPos="right" data={benefitTwo} />
         <SectionTitle pretitle="about" title="Learn more about decentroge">
-          Decentroge a decentralise storage online Platforms with NFT, Chatting.
-          The user can store their data on private or public cloud servers.
-          Users can access files directly through web browser without using any
-          third party software
+          Decentroge a decentralise storage online Platforms with NFT and
+          Chatting capabilities. Users can store their data on IPFS or Web3
+          Storage. Users can access files directly through web browser without
+          using any third party software.
           <br></br>
           <br></br>
           <p>
