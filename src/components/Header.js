@@ -13,6 +13,7 @@ function Header() {
   const { address, signer, connect, disconnect, web3Provider } =
     useContext(AuthContext);
   const { user } = useMoralis();
+  let userprofile_ = JSON.parse(localStorage.getItem("userprofile"));
   let username;
   if (!user?.getUsername()) {
     username = "me";
@@ -104,9 +105,9 @@ function Header() {
               </Button>
             )}
 
-            {userprofile === null ? (
+            {userprofile === null || userprofile[2] === "" ? (
               <div class=" hidden md:flex items-center justify-center h-10 w-10 rounded-full bg-blue-300 flex-shrink-0">
-                <Emojicons username={user?.getUsername() || "me"} />
+                <Emojicons username={user?.getUsername()} />
               </div>
             ) : (
               <img

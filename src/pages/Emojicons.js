@@ -6,7 +6,7 @@ function Emojicons({ username, logoutOnPress }) {
   return (
     <img
       src={`https://avatars.dicebear.com/api/pixel-art/${
-        username || user.get("username")
+        username || user?.get("username")
       }.svg`}
       width="60"
       height="60"
