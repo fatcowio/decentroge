@@ -17,71 +17,6 @@ export default function NFT() {
   const { address, signer, connect, contract, provider } =
     useContext(AuthContext);
 
-  const list = [
-    {
-      title: "Orange",
-      img: "/images/fruit-1.jpeg",
-      price: "$5.50",
-      description: "short descriptions",
-    },
-    {
-      title: "Tangerine",
-      img: "/images/fruit-2.jpeg",
-      price: "3.00 ETH",
-      description: "short descriptions",
-    },
-    {
-      title: "Raspberry",
-      img: "/images/fruit-3.jpeg",
-      price: "$10.00",
-      description: "short descriptions",
-    },
-    {
-      title: "Lemon",
-      img: "/images/fruit-4.jpeg",
-      price: "$5.30",
-      description: "short descriptions",
-    },
-    {
-      title: "Advocato",
-      img: "/images/fruit-5.jpeg",
-      price: "$15.70",
-      description: "short descriptions",
-    },
-    {
-      title: "Lemon 2",
-      img: "/images/fruit-6.jpeg",
-      price: "$8.00",
-      description: "short descriptions",
-    },
-    {
-      title: "Banana",
-      img: "/images/fruit-7.jpeg",
-
-      price: "$7.50",
-      description: "short descriptions",
-    },
-    {
-      title: "Watermelon",
-      img: "/images/fruit-8.jpeg",
-      price: "$12.20",
-      description: "short descriptions",
-    },
-    {
-      title: "Banana",
-      img: "/images/fruit-7.jpeg",
-
-      price: "$7.50",
-      description: "short descriptions",
-    },
-    {
-      title: "Watermelon",
-      img: "/images/fruit-8.jpeg",
-      price: "$12.20",
-      description: "short descriptions",
-    },
-  ];
-
   const [modal, setModal] = useState(false);
   const [assetname, setassetname] = useState("");
   const [assetdescription, setassetdescription] = useState("");
@@ -96,12 +31,31 @@ export default function NFT() {
     console.log("nft ----------", data);
   }
   useEffect(() => {
+    let isnftactive = localStorage.getItem("nftactive");
+    let nftstring = localStorage.getItem("nftstring");
+    if (isnftactive == "true") {
+      setModal(true);
+      setasseturl(nftstring);
+    }
+
+    if (isnftactive == "") {
+      setModal(false);
+    }
     loadNFT();
   }, [signer, isnftready]);
 
   const onAddNFT = async () => {
     setisloading(true);
 
+    if (
+      assetdescription == "" ||
+      assetname == "" ||
+      assetprice == "" ||
+      asseturl == ""
+    ) {
+      alert("all fields required");
+      return;
+    }
     const price = ethers.utils.parseUnits(assetprice, "ether");
 
     let listingPrice = await signer.getListingPrice();
@@ -121,6 +75,12 @@ export default function NFT() {
     setisloading(false);
     setisnftready(true);
     setModal(false);
+    setassetdescription("");
+    setassetprice("");
+    setasseturl("");
+    setassetname("");
+    localStorage.setItem("nftactive", "");
+    localStorage.setItem("nftstring", "");
   };
 
   async function buyNft(nft) {
@@ -137,7 +97,7 @@ export default function NFT() {
     });
     // const transaction = await contract.createMarketSale(nft.tokenId);
     await transaction.wait();
-    alert("nft purchased");
+    alert("NFT purchased");
     // loadNFTs();
   }
   return (
@@ -147,6 +107,8 @@ export default function NFT() {
         state={modal}
         onClick={() => {
           setModal(false);
+          localStorage.setItem("nftactive", "");
+          localStorage.setItem("nftstring", "");
         }}
         actionButtonDesktop={
           <div className="hidden sm:block">

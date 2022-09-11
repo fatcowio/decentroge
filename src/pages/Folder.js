@@ -486,7 +486,7 @@ function Dashboard() {
                       localStorage.setItem("nftactive", true);
                     }}
                   >
-                    Use as NFT
+                    <Link to="/app/nft">Use as NFT</Link>
                   </Button>
                 </TableCell>
               </TableRow>

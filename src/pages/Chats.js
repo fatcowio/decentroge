@@ -30,11 +30,6 @@ function Modals() {
     loaduser();
   }, [signer]);
 
-  // const addDefaultSrc = (ev) => {
-  //   console.log(ev);
-  //   ev.target.src = <Emojicons username={user.get("username")} />;
-  // };
-
   const { data } = useMoralisQuery(
     "Messages",
     (query) =>

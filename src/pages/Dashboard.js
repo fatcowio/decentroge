@@ -46,16 +46,24 @@ import WS from "../assets/img/ws.png";
 import IPFS from "../assets/img/ipfs.png";
 import Moralis from "../assets/img/moralis.png";
 import FolderCard from "../components/Cards/FolderCard";
-import { ellipseAddress } from "../lib/utilities";
+import { ellipseAddress, timeConverter } from "../lib/utilities";
 
 function Dashboard() {
   let isActive = localStorage.getItem("isActive");
 
   const history = useHistory();
   const [visible, setVisible] = React.useState(false);
+  const [visible2, setvisible2] = useState(false);
   const handler = () => setVisible(true);
-  const { address, signer, contract, provider, chainId, connect } =
-    useContext(AuthContext);
+  const {
+    address,
+    signer,
+    contract,
+    provider,
+    chainId,
+    connect,
+    web3Provider,
+  } = useContext(AuthContext);
 
   console.log("signer", signer);
   const [isloading, setisloading] = useState(false);
@@ -75,6 +83,7 @@ function Dashboard() {
   const [currectplatform, setcurrectplatform] = useState([]);
   const [isplatformready, setisplatformready] = useState(false);
   const [isactiveid, setisactiveid] = useState();
+  const [isnotconnected, setisnotconnected] = useState(false);
   // console.log(foldername);
   async function loadfolders(id) {
     const data = await signer?.getFolders(id);
@@ -104,6 +113,10 @@ function Dashboard() {
   }
 
   useEffect(() => {
+    if (!web3Provider) {
+      setisnotconnected(true);
+      setvisible2(true);
+    }
     let active = localStorage.getItem("isActive");
     if (active == "ipfs") {
       setisipfsready(true);
@@ -184,29 +197,49 @@ function Dashboard() {
   };
   return (
     <>
-      <Modal blur aria-labelledby="modal-title" open={visible} preventClose>
+      <Modal blur aria-labelledby="modal-title" open={visible2} preventClose>
         <Modal.Header>
           <Text id="modal-title" size={18}>
-            Add a storage platform to process with the application{" "}
             <Text b size={18}>
               Decentroge
             </Text>
           </Text>
         </Modal.Header>
-        {/* <Modal.Body>
-          <p>fdsfdffd</p>
-        </Modal.Body> */}
+        <Modal.Body>
+          <Text id="modal-title" size={18}>
+            Connect your wallet
+          </Text>
+        </Modal.Body>
+        <Modal.Footer>
+          <Link to="/app/storage">
+            <Button
+              onClick={() => {
+                connect();
+              }}
+            >
+              {" "}
+              Connect
+            </Button>
+          </Link>
+        </Modal.Footer>
+      </Modal>
+      <Modal blur aria-labelledby="modal-title" open={visible} preventClose>
+        <Modal.Header>
+          <Text id="modal-title" size={18}>
+            <Text b size={18}>
+              Decentroge
+            </Text>
+          </Text>
+        </Modal.Header>
+        <Modal.Body>
+          <Text id="modal-title" size={18}>
+            Add a storage platform to process with the application{" "}
+          </Text>
+        </Modal.Body>
         <Modal.Footer>
           <Link to="/app/storage">
             <Button>Add storage platform</Button>
           </Link>
-          {/* <Link to="/app/storage" /> */}
-          {/* <Button
-           
-            >
-            Close
-          </Button> */}
-          {/* </Link> */}
         </Modal.Footer>
       </Modal>
 
@@ -517,10 +550,12 @@ function Dashboard() {
         <Table>
           <TableHeader>
             <tr>
+              <TableCell>Number</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>File Size</TableCell>
               <TableCell>Upload Time</TableCell>
+              <TableCell>Action</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
@@ -551,7 +586,17 @@ function Dashboard() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <span>{files?.uploadTime?.toString()}</span>
+                  <span>{timeConverter(files?.uploadTime?.toString())}</span>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => {
+                      localStorage.setItem("nftstring", files?.fileHash);
+                      localStorage.setItem("nftactive", true);
+                    }}
+                  >
+                    <Link to="/app/nft">Use as NFT</Link>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
