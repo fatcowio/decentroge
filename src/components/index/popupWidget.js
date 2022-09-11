@@ -1,7 +1,7 @@
 import React from "react";
 
 const popupWidget = () => {
-  return <div>popupWidget</div>;
+  return <div></div>;
 };
 
 export default popupWidget;

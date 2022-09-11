@@ -16,22 +16,22 @@ import { ThemeProvider } from "next-themes";
 // }
 
 ReactDOM.render(
-  <ThemeProvider attribute="class">
-    <SidebarProvider>
-      <Suspense fallback={<ThemedSuspense />}>
-        <Windmill usePreferences>
-          <AuthProvider>
-            <MoralisProvider
-              appId="RJbl7MbhvdyOMf9QVJlbhiatTK6XOSqzOefI8a6l"
-              serverUrl="https://oyienocjo8np.usemoralis.com:2053/server"
-            >
-              <App />
-            </MoralisProvider>
-          </AuthProvider>
-        </Windmill>
-      </Suspense>
-    </SidebarProvider>
-  </ThemeProvider>,
+  // <ThemeProvider attribute="class">
+  <SidebarProvider>
+    <Suspense fallback={<ThemedSuspense />}>
+      <Windmill usePreferences>
+        <AuthProvider>
+          <MoralisProvider
+            appId="RJbl7MbhvdyOMf9QVJlbhiatTK6XOSqzOefI8a6l"
+            serverUrl="https://oyienocjo8np.usemoralis.com:2053/server"
+          >
+            <App />
+          </MoralisProvider>
+        </AuthProvider>
+      </Windmill>
+    </Suspense>
+  </SidebarProvider>,
+  // </ThemeProvider>,
   document.getElementById("root")
 );
 

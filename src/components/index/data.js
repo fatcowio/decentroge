@@ -11,46 +11,47 @@ import benefitOneImg from "../../public/img/benefit-one.png";
 import benefitTwoImg from "../../public/img/benefit-two.png";
 import fdfs from "../../";
 const benefitOne = {
-  title: "Simple and Intuitive UI",
-  desc: "Simple to use and comprehend",
-  image: benefitOneImg,
+  title: "Storage",
+  // desc: "ou have the freedom to choose whether to store your data on IPFS or Web3 storage.",
+
+  image: benefitTwoImg,
   bullets: [
     {
-      title: "Understand your customers",
-      desc: "Then explain the first point breifly in one or two lines.",
+      title: "File manager",
+      desc: "Directly browse your files from anywhere in the world",
       icon: <FaceSmileIcon />,
     },
     {
-      title: "Improve acquisition",
-      desc: "Here you can add the next benefit point.",
+      title: "Sharing",
+      desc: "Easily share files with friends and family.",
       icon: <ChartBarSquareIcon />,
     },
     {
-      title: "Drive customer retention",
-      desc: "This will be your last bullet point in this section.",
+      title: "Mobile compatible",
+      desc: "Access your files anytime and anywhere",
       icon: <CursorArrowRippleIcon />,
     },
   ],
 };
 
 const benefitTwo = {
-  title: "Your data belongs to you",
-  desc: "It is secure and unchangeable because of the use of blockchain. indicating that nobody can manipulate your data",
-  image: benefitTwoImg,
+  title: "And even more with Decentroge...",
+  // desc: "It is secure and unchangeable because of the use of blockchain. indicating that nobody can manipulate your data",
+  image: benefitOneImg,
   bullets: [
     {
-      title: "Mobile Responsive Template",
-      desc: "Nextly is designed as a mobile first responsive template.",
+      title: "NFT Token",
+      desc: "Mint NFT directly from files saved on Decentroge ",
       icon: <DevicePhoneMobileIcon />,
     },
     {
-      title: "Powered by Next.js & TailwindCSS",
-      desc: "This template is powered by latest technologies and tools.",
+      title: "Chat",
+      desc: "Send  messages with anyone you want using decentroge",
       icon: <AdjustmentsVerticalIcon />,
     },
     {
-      title: "Dark & Light Mode",
-      desc: "Nextly comes with a zero-config light & dark mode. ",
+      title: "Hybrid Storage ",
+      desc: "You can host both IPFS and Web3storage servers for free. ",
       icon: <SunIcon />,
     },
   ],

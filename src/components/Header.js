@@ -66,7 +66,7 @@ function Header() {
               )}
             </button>
           </li>
-          <li className="flex">
+          <li className="flex flex-row items-center">
             {web3Provider ? (
               // <div
               //   className=" bg-gradient-to-r from-cyan-500 to-blue-500 px-4 md:px-6  md:py-3 py-2 rounded-md cursor-pointer text-white"
@@ -106,7 +106,7 @@ function Header() {
               </div>
             ) : (
               <img
-                class=" hidden md:block mb-3 w-10 h-10 rounded-full shadow-lg"
+                class=" hidden md:block  w-10 h-10 rounded-full shadow-lg"
                 src={userprofile[2]}
                 alt="Bonnie image"
               />

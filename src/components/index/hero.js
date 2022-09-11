@@ -31,16 +31,15 @@ export default function Hero() {
               </span>{" "}
               Get <span ref={el}></span> All in one app
             </h1>
-            <p className="py-5 text-xl leading-normal text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300">
-              Use one app to accomplish the most. Your go-to website for
-              productivity is Productify. The blockchain is used to handle
-              everything. Consequently, it is your top secure productivity app.
+            <p className="py-5 text-xl leading-normal text-gray-600 lg:text-xl xl:text-2xl dark:text-gray-300">
+              Decentroge a decentralise storage online Platforms with NFT,
+              Chatting. The user can store their data on private or public cloud
+              servers like IPFS and Web3 Storage.
             </p>
 
             <div className="flex flex-col items-start space-x-3 space-y-3 sm:space-y-0 sm:items-center sm:flex-row">
               <a
-                href="https://github.com/web3templates"
-                target="_blank"
+                href="/app/dashboard"
                 rel="noopener"
                 className="px-8 py-4 text-lg font-medium text-center text-white bg-indigo-600 rounded-md "
               >

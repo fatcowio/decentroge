@@ -15,7 +15,7 @@ export default function Navbar() {
             <>
               <div className="flex flex-wrap items-center justify-between w-full lg:w-auto">
                 {/* <Link href="/"> */}
-                <a className="flex items-center space-x-2 text-2xl font-medium text-indigo-500 dark:text-gray-100">
+                <a className="flex items-center space-x-2 text-2xl font-medium  text-cool-gray-100">
                   <span>
                     <img
                       src={logo}
@@ -56,16 +56,12 @@ export default function Navbar() {
 
                 <Disclosure.Panel className="flex flex-wrap w-full my-5 lg:hidden">
                   <>
-                    {navigation.map((item, index) => (
-                      // <Link key={index} href="/">
-                      <a className="w-full px-4 py-2 -ml-4 text-gray-500 rounded-md dark:text-gray-300 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 focus:outline-none dark:focus:bg-trueGray-700 bg-gradient-to-r from-fuchsia-500 via-red-600 to-orange-400">
-                        {item}
-                      </a>
-                      // </Link>
-                    ))}
                     {/* <Link href="/"> */}
-                    <a className="w-full px-6 py-2 mt-3 text-center text-white rounded-md lg:ml-5 bg-gradient-to-r from-fuchsia-500 via-red-600 to-orange-400">
-                      Connect{" "}
+                    <a
+                      href="/app/dashboard"
+                      className=" cursor-pointer w-full px-6 py-2 mt-3 text-center text-white rounded-md lg:ml-5 bg-gradient-to-r from-fuchsia-500 via-red-600 to-orange-400"
+                    >
+                      Dashboard{" "}
                     </a>
                     {/* </Link> */}
                   </>
@@ -79,12 +75,13 @@ export default function Navbar() {
 
         <div className="hidden mr-3 space-x-3 lg:flex nav__item">
           {/* <Link href="/"> */}
-          <a className="px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5">
-            Connect{" "}
+          <a
+            href="/app/dashboard"
+            className="cursor-pointer px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5"
+          >
+            Dashboard{" "}
           </a>
           {/* </Link> */}
-
-          <ThemeChanger />
         </div>
       </nav>
     </div>
