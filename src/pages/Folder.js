@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { FolderOpenIcon } from "@heroicons/react/24/solid";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, Link } from "react-router-dom";
 import PageTitle from "../components/Typography/PageTitle";
 // import { NFTStorage } from "https://cdn.jsdelivr.net/npm/nft.storage/dist/bundle.esm.min.js";
 import { Web3Storage } from "web3.storage";
 import axios from "axios";
+import { Progress } from "@nextui-org/react";
+
 // import { Web3Storage } from "web3.storage/dist/bundle.esm.min.js.map";
 import response from "../utils/demo/tableData";
 import Modals from "../components/Modal/Modal";
@@ -53,7 +55,7 @@ import WS from "../assets/img/ws.png";
 import IPFS from "../assets/img/ipfs.png";
 import Moralis from "../assets/img/moralis.png";
 import FolderCard from "../components/Cards/FolderCard";
-import { ellipseAddress } from "../lib/utilities";
+import { ellipseAddress, timeConverter } from "../lib/utilities";
 import { Loading } from "@nextui-org/react";
 
 function Dashboard() {
@@ -259,9 +261,7 @@ function Dashboard() {
         }}
         actionButtonDesktop={
           <div className="hidden sm:block">
-            <Button block size="large">
-              Download
-            </Button>
+            <Button>Download</Button>
           </div>
         }
         actionButtonMobile={
@@ -280,13 +280,6 @@ function Dashboard() {
         }
       >
         <div className="mb-4">
-          {copied ? (
-            <p className="text-center text-xl bg-green-400 rounded-lg py-0 max-w-xs text-white m-auto mb-2">
-              copied
-            </p>
-          ) : (
-            ""
-          )}
           <CopyToClipboard
             text={fileinfo.fileHash}
             onCopy={() => {
@@ -294,7 +287,7 @@ function Dashboard() {
             }}
           >
             <Button block size="small" layout="outline">
-              Copy URL
+              {copied ? "Copied" : "Copy URL"}
             </Button>
             {/* <span>Copy to clipboard with span</span> */}
           </CopyToClipboard>
@@ -409,18 +402,37 @@ function Dashboard() {
         />
       )}
 
-      {isloading ? <Loading size="lg" /> : ""}
+      {isloading ? (
+        <Progress
+          indeterminated
+          value={50}
+          color="secondary"
+          status="secondary"
+        />
+      ) : (
+        ""
+      )}
 
       {file && (
         <button
           onClick={() => {
             onUploadFile();
           }}
+          className="bg-blue-600 items-center space-x-4 flex rounded-full px-8 py-2 text-white item-center m-auto mt-4 mb-4"
         >
           Upload
         </button>
       )}
-      {isfileuploading ? <Loading size="lg" /> : ""}
+      {isfileuploading ? (
+        <Progress
+          indeterminated
+          value={50}
+          color="secondary"
+          status="secondary"
+        />
+      ) : (
+        ""
+      )}
       {/* <FilePreview type={"file"} file={file} onError={onError} /> */}
       {/* {file && <img className="rounded mt-4" width="full" src={file} />} */}
       <PageTitle>Files in {foldername}</PageTitle>
@@ -429,10 +441,12 @@ function Dashboard() {
         <Table>
           <TableHeader>
             <tr>
+              <TableCell>Number</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>File Size</TableCell>
               <TableCell>Upload Time</TableCell>
+              <TableCell>Action</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
@@ -463,7 +477,17 @@ function Dashboard() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <span>{files?.uploadTime?.toString()}</span>
+                  <span>{timeConverter(files?.uploadTime?.toString())}</span>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => {
+                      localStorage.setItem("nftstring", files?.fileHash);
+                      localStorage.setItem("nftactive", true);
+                    }}
+                  >
+                    Use as NFT
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

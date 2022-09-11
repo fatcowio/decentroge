@@ -140,6 +140,10 @@ function Dashboard() {
   console.log("isactiveid", isactiveid);
 
   const onCreateFolder = async (foldername_) => {
+    if (foldername_ === "") {
+      alert("foldername cant be empty");
+      return;
+    }
     let transaction = await signer.createFolder(foldername_, isactiveid);
     setisloading(true);
     let txReceipt = await transaction.wait();

@@ -69,6 +69,17 @@ function Charts() {
   };
 
   const onCreatePlatform = async () => {
+    // console.log(token);
+    if (
+      token == ""
+      // ||
+      // platformName === "" ||
+      // projectid === "" ||
+      // projectsecret === ""
+    ) {
+      alert("All fields are required");
+      return;
+    }
     let transaction = await signer.addPlatform(
       platformName,
       token,

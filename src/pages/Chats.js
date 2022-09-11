@@ -9,7 +9,7 @@ import { Input } from "@windmill/react-ui";
 import { ellipseAddress } from "../lib/utilities";
 import { AuthContext } from "../utils/AuthProvider";
 
-const MINS_DURATION = 59;
+const MINS_DURATION = 90;
 
 function Modals() {
   const { isAuthenticated, logout, authenticate, user, Moralis, setUserData } =
@@ -87,15 +87,9 @@ function Modals() {
     return (
       <button
         onClick={authenticate}
-        className="bg-sky-200 items-center space-x-4 flex rounded-full px-8 py-2 text-black animate-pulse "
+        className="bg-blue-600 items-center space-x-4 flex rounded-full px-8 py-2 text-white item-center m-auto mt-6 "
       >
         LOGIN TO CHAT
-        <img
-          src="/metaicon.png"
-          className="ml-4 item-center"
-          width="35"
-          height="35"
-        />
       </button>
     );
   }
