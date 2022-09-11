@@ -550,7 +550,6 @@ function Dashboard() {
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Number</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>File Size</TableCell>
@@ -559,47 +558,52 @@ function Dashboard() {
             </tr>
           </TableHeader>
           <TableBody>
-            {files?.map((files, i) => (
-              <TableRow
-                onClick={() => {
-                  setFileModal(true);
-                  setfileinfo(files);
-                }}
-              >
-                <TableCell>
-                  <span className="text-sm"> {files?.fileId?.toString()}</span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    {fileFormatIcon(files.fileType)}
-                    <div>
-                      <p className="font-semibold">{files.fileName}</p>
+            {files
+              ?.map((files, i) => (
+                <TableRow
+                  onClick={() => {
+                    setFileModal(true);
+                    setfileinfo(files);
+                  }}
+                >
+                  <TableCell>
+                    <div className="flex items-center text-sm">
+                      {fileFormatIcon(files.fileType)}
+                      <div>
+                        <p className="font-semibold">{files.fileName}</p>
+                      </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm"> {files.fileType}</span>
-                </TableCell>
-                <TableCell>
-                  <span>
-                    {prettyBytes(parseInt(files?.fileSize?.toString()) || 0)}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <span>{timeConverter(files?.uploadTime?.toString())}</span>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    onClick={() => {
-                      localStorage.setItem("nftstring", files?.fileHash);
-                      localStorage.setItem("nftactive", true);
-                    }}
-                  >
-                    <Link to="/app/nft">Use as NFT</Link>
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm"> {files.fileType}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span>
+                      {prettyBytes(parseInt(files?.fileSize?.toString()) || 0)}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span>{timeConverter(files?.uploadTime?.toString())}</span>
+                  </TableCell>
+                  <TableCell>
+                    {files?.fileType != "mp3" &&
+                    files?.fileType != "mp4" &&
+                    files?.fileType != "pdf" ? (
+                      <Button
+                        onClick={() => {
+                          localStorage.setItem("nftstring", files?.fileHash);
+                          localStorage.setItem("nftactive", true);
+                        }}
+                      >
+                        <Link to="/app/nft">Use as NFT</Link>
+                      </Button>
+                    ) : (
+                      ""
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+              .reverse()}
           </TableBody>
         </Table>
         <TableFooter>
