@@ -2,8 +2,8 @@
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-contract-sizer");
 const fs = require("fs");
-const privateKey =
-  "689af8efa8c651a91ad287602527f3af2fe9f6501a7ac4b061667b5a93e037fd";
+const privateKey = fs.readFileSync("secret.txt").toString();
+
 const projectId = "xxx";
 
 module.exports = {
