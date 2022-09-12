@@ -461,7 +461,7 @@ function Dashboard() {
                   <InfoCard
                     title={files.fileName}
                     image={files.fileHash}
-                    value={files.uploadTime.toString()}
+                    value={timeConverter(files.uploadTime.toString())}
                   ></InfoCard>
                 </div>
               );
@@ -475,7 +475,7 @@ function Dashboard() {
                 >
                   <FileCard
                     title={files.fileName}
-                    value={files.uploadTime.toString()}
+                    value={timeConverter(files.uploadTime.toString())}
                     type={files.fileType}
                   />
                 </div>

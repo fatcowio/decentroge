@@ -225,6 +225,22 @@ const supportedChains: IChainData[] = [
       balance: '',
     },
   },
+  {
+    name: 'Evmos',
+    short_name: 'EVMOS',
+    chain: 'evmost',
+    network: 'mainnet',
+    chain_id: 9000,
+    network_id: 8545,
+    rpc_url: 'https://eth.bd.evmos.dev:8545',
+    native_currency: {
+      symbol: 'EVMOS',
+      name: 'EVMOS',
+      decimals: '18',
+      contractAddress: '',
+      balance: '',
+    },
+  },
 ];
 
 export default supportedChains;

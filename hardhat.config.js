@@ -18,6 +18,10 @@ module.exports = {
       allowUnlimitedContractSize: true,
       accounts: [privateKey],
     },
+    testnet: {
+      url: "https://eth.bd.evmos.dev:8545",
+      accounts: [privateKey],
+    },
     matic: {
       url: "https://polygon-mumbai.g.alchemy.com/v2/2bGIFu-iEnl9RvAOTe1ddZI2gBnuYQGS",
       accounts: [privateKey],
