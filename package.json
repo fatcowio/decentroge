@@ -84,7 +84,7 @@
     "prestart": "npm run tailwind:dev",
     "start": "react-app-rewired start",
     "prebuild": "npm run tailwind:build",
-    "build": "react-scripts build",
+    "build": "react-app-rewired build",
     "cz": "git-cz",
     "release": "release-it",
     "test": "react-scripts test",
