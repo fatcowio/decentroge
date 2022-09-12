@@ -13,7 +13,6 @@ module.exports = {
       chainId: 1337,
       allowUnlimitedContractSize: true,
     },
-
     mumbai: {
       url: "https://rpc-mumbai.maticvigil.com",
       allowUnlimitedContractSize: true,
