@@ -84,7 +84,7 @@
     "prestart": "npm run tailwind:dev",
     "start": "react-app-rewired start",
     "prebuild": "npm run tailwind:build",
-    "build": "react-app-rewired build",
+    "build": " DISABLE_ESLINT_PLUGIN=true react-app-rewired build --openssl-legacy-provider",
     "cz": "git-cz",
     "release": "release-it",
     "test": "react-scripts test",
