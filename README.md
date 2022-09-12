@@ -47,7 +47,7 @@ That is how decentroge came to be.
 
 ## 🚀 How it works
 
-Decentroge is a decentralise storage online Platforms with NFT and Chatting capabilities.Users can store their data on IPFS or Web3 Storage. Users can access files directly through web browser without using any third party software.
+Decentroge is a decentralise storage online Platforms with NFT and Chatting capabilities.Users can choose store their data on IPFS or Web3 Storage. Users can access files directly through web browser without using any third party software.
 
  It has been implemented in order to reduce the dependency on centralized services like Dropbox and Google Drive where users are dependent on a single point of failure. It will give you complete control over your data, right from its inception.
  Features:
