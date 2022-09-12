@@ -188,6 +188,8 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 - [ ] Working of creating our own decentralize storage system
 
+- [ ] Get tokens as your share files
+
 
 ## 🧑🏻 Author
 

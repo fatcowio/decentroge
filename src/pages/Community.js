@@ -94,10 +94,7 @@ function Buttons() {
       >
         <Modal.Header>
           <Text id="modal-title" size={18}>
-            Welcome to
-            <Text b size={18}>
-              NextUI
-            </Text>
+            Add a profile <Text b size={18}></Text>
           </Text>
         </Modal.Header>
         <Modal.Body>
