@@ -299,22 +299,17 @@ function Dashboard() {
         }}
         actionButtonDesktop={
           <div className="hidden sm:block">
-            <Button block size="large">
+            {/* <Button block size="large">
               Download
-            </Button>
+            </Button> */}
           </div>
         }
         actionButtonMobile={
           <div className="block w-full sm:hidden">
-            {/* <DownloadLink
-              label="Save"
-              filename="myfile.txt"
-              exportFile={() => "My cached data"}
-            /> */}
             <DownloadLink filename={fileinfo.fileHash}>
-              <Button block size="large">
+              {/* <Button block size="large">
                 Download
-              </Button>
+              </Button> */}
             </DownloadLink>
           </div>
         }

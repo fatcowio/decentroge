@@ -124,12 +124,6 @@ function Charts() {
 
   return (
     <>
-      <button
-        onClick={connect}
-        className=" bg-gradient-to-r my-4 from-blue-400 to-emerald-400 text-center w-max   px-4 py-1  rounded-full cursor-pointer text-white"
-      >
-        connect
-      </button>
       <PageTitle>Storage Statistics</PageTitle>
       <Modals
         title={"Add Credentials"}
